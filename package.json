@@ -50,6 +50,7 @@
     "velocity-react": "^1.1.4"
   },
   "dependencies": {
+    "bootstrap": "^3.3.6",
     "react-helmet": "^3.0.0",
     "whatwg-fetch": "^0.11.0"
   }
