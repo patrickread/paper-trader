@@ -2,7 +2,9 @@ import React from 'react'
 
 import Portfolio from './Models/Portfolio'
 import Header from './Shared/Header'
+import AddButton from './Shared/AddButton'
 import StockLine from './StockLine'
+import Total from './Total'
 
 require('velocity-animate');
 require('velocity-animate/velocity.ui');
@@ -49,14 +51,24 @@ var App = React.createClass({
           price: 36.81,
           commission: 7.00
         }
-      ]
+      ],
+      cash: 1034.97
     }
   },
 
   componentWillMount: function () {
     var portfolio = new Portfolio(this.state.transactions);
+    var that = this;
+
     this.setState({
       portfolio: portfolio
+    });
+
+    portfolio.updateHoldingsFromAPI(function() {
+      // refresh portfolio with new data
+      that.setState({
+        portfolio: portfolio
+      })
     });
   },
 
@@ -65,19 +77,26 @@ var App = React.createClass({
   },
 
   render: function () {
-    var components = []
+    var stockLines = []
 
     for (var stock of this.state.portfolio.holdings) {
-      components.push(<StockLine {...stock}>
+      stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
                       </StockLine>)
     }
 
     return <div style={this.props.style} className='paper-trader-app'>
       <Header></Header>
       <section className="content">
-        {components}
+        {stockLines}
+        <Total cash={this.state.cash} portfolio={this.state.portfolio}></Total>
       </section>
+      <AddButton>
+      </AddButton>
     </div>
+  },
+
+  trade: function(symbol) {
+    console.log("Gonna trade " + symbol + "! Not implemented yet, though.");
   }
 })
 

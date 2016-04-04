@@ -1,94 +1,60 @@
 import React from 'react'
 
-import Markit from './Apis/QuoteService'
-
 var StockLine = React.createClass({
   getInitialState: function () {
     return {
-      price: "$0.00",
-      changePercentObj: {
-        string: "",
-        number: 0.00,
-        className: ""
-      },
-      holdingChangeObj: {
-        string: "",
-        number: 0.00,
-        className: ""
-      }
+      
     }
   },
 
   componentWillMount: function () {
-    var that = this;
-    var quoteService = new Markit.QuoteService(this.props.symbol, function(jsonResult) {
-      that.setState({
-        price: "$" + jsonResult.LastPrice.toString(),
-        changePercentObj: that.changePercentObj(jsonResult.ChangePercent),
-        holdingChangeObj: that.holdingChangeObj(jsonResult.Change, that.props.shares)
-      });
-    })
+    
   },
 
   componentWillUnmount () {
     
   },
 
+  onGraph: function() {
+    console.log("Gonna graph. Not implemented, though!");
+  },
+
+  onTrade: function() {
+    this.props.onTrade(this.props.stock.symbol);
+  },
+
   render: function () {
-    var changePercentClassName = "change-percent " + this.state.changePercentObj.className;
-    var holdingChangeClassName = "holding-change " + this.state.holdingChangeObj.className;
+    var changePercentClassName = "change-percent " + this.props.stock.changePercentObj.className;
+    var holdingChangeClassName = "holding-change " + this.props.stock.holdingChangeObj.className;
 
     return <div style={this.props.style} className='stock-line container'>
       <div className="row">
-        <div className="col-xs-6 col-sm-2">
-          <label className="name">{this.props.name}</label>
-          <h1 className="symbol">{this.props.symbol}</h1>
+        <div className="col-xs-6 col-sm-3">
+          <label className="name">{this.props.stock.name}</label>
+          <h1 className="symbol">{this.props.stock.symbol}</h1>
         </div>
-        <div className="col-xs-6 col-sm-1">
-          <div className="price">{this.state.price}</div>
+        <div className="hidden-xs col-sm-2">
+          <label>Share Price</label>
+          <div className="price">{this.props.stock.priceString}</div>
         </div>
-        <div className="hidden-xs col-sm-2 col-sm-offset-4">
-          <label>Changes Today</label>
-          <div className={changePercentClassName}>{this.state.changePercentObj.string}</div>
+        <div className="hidden-xs col-sm-3 col-sm-offset-1">
+          <label>% Change Today</label>
+          <div className={changePercentClassName}>{this.props.stock.changePercentObj.string}</div>
         </div>
-        <div className="hidden-xs col-sm-3">
-          <div className={holdingChangeClassName}>{this.state.holdingChangeObj.string}</div>
+        <div className="col-xs-6 col-sm-3">
+          <label className="holding-change-label">$ Change Today</label>
+          <div className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</div>
         </div>
       </div>
       <div className="row toolbar">
+        <div className="toolbar-item" onClick={this.onTrade}>
+          Trade
+        </div>
+        <div className="toolbar-item" onClick={this.onGraph}>
+          Graph
+        </div>
       </div>
     </div>
-  },
-
-  changePercentObj: function(changePercent) {
-    var changePercent = {
-      number: Math.round(changePercent * 100.0) / 100.0
-    };
-
-    if (changePercent.number >= 0) {
-      changePercent.string = "+" + changePercent.number.toString() + "%";
-      changePercent.className = "positive";
-    } else {
-      changePercent.string = changePercent.number.toString() + "%";
-      changePercent.className = "negative";
-    }
-
-    return changePercent;
-  },
-
-  holdingChangeObj: function(dollarChange, shares) {
-    var holdingChange = {
-      number: Math.round(dollarChange * shares * 100.0) / 100.0
-    };
-    if (holdingChange.number >= 0) {
-      holdingChange.string = "+$" + holdingChange.number.toString();
-      holdingChange.className = "positive";
-    } else {
-      holdingChange.string = "-$" + (holdingChange.number * -1).toString();
-      holdingChange.className = "negative";
-    }
-
-    return holdingChange;
   }
 })
 

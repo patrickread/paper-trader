@@ -1,6 +1,6 @@
 import React from 'react'
 
-var StockLine = React.createClass({
+var Header = React.createClass({
   componentWillMount: function () {
     
   },
@@ -17,4 +17,4 @@ var StockLine = React.createClass({
   }
 })
 
-export default StockLine
+export default Header

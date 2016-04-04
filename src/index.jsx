@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 
 var style = {
-  height: '550px',
   position: 'relative',
   overflow: 'hidden'
 }
