@@ -3,6 +3,7 @@ import React from 'react'
 import Portfolio from './Models/Portfolio'
 import Header from './Shared/Header'
 import AddButton from './Shared/AddButton'
+import LoadingDialog from './Shared/LoadingDialog'
 import StockLine from './StockLine'
 import Total from './Total'
 
@@ -14,6 +15,7 @@ import '../assets/css/app.less'
 var App = React.createClass({
   getInitialState: function () {
     return {
+      loading: true,
       transactions: [
         {
           key: 1,
@@ -67,6 +69,7 @@ var App = React.createClass({
     portfolio.updateHoldingsFromAPI(function() {
       // refresh portfolio with new data
       that.setState({
+        loading: false,
         portfolio: portfolio
       })
     });
@@ -79,12 +82,17 @@ var App = React.createClass({
   render: function () {
     var stockLines = []
 
+    var appClassName = 'paper-trader-app';
+    if (this.state.loading) {
+      appClassName += ' loading';
+    }
+
     for (var stock of this.state.portfolio.holdings) {
       stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
                       </StockLine>)
     }
 
-    return <div style={this.props.style} className='paper-trader-app'>
+    return <div style={this.props.style} className={appClassName}>
       <Header></Header>
       <section className="content">
         {stockLines}
@@ -92,6 +100,7 @@ var App = React.createClass({
       </section>
       <AddButton>
       </AddButton>
+      <LoadingDialog></LoadingDialog>
     </div>
   },
 

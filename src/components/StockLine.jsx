@@ -24,8 +24,8 @@ var StockLine = React.createClass({
   },
 
   render: function () {
-    var changePercentClassName = "change-percent " + this.props.stock.changePercentObj.className;
-    var holdingChangeClassName = "holding-change " + this.props.stock.holdingChangeObj.className;
+    var changePercentClassName = "loaded-text change-percent " + this.props.stock.changePercentObj.className;
+    var holdingChangeClassName = "loaded-text holding-change " + this.props.stock.holdingChangeObj.className;
 
     return <div style={this.props.style} className='stock-line container'>
       <div className="row">
@@ -34,15 +34,15 @@ var StockLine = React.createClass({
           <h1 className="symbol">{this.props.stock.symbol}</h1>
         </div>
         <div className="hidden-xs col-sm-2">
-          <label>Share Price</label>
-          <div className="price">{this.props.stock.priceString}</div>
+          <label className="loaded-label">Share Price</label>
+          <div className="loaded-text price">{this.props.stock.priceString}</div>
         </div>
         <div className="hidden-xs col-sm-3 col-sm-offset-1">
-          <label>% Change Today</label>
+          <label className="loaded-label">% Change Today</label>
           <div className={changePercentClassName}>{this.props.stock.changePercentObj.string}</div>
         </div>
         <div className="col-xs-6 col-sm-3">
-          <label className="holding-change-label">$ Change Today</label>
+          <label className="loaded-label holding-change-label">$ Change Today</label>
           <div className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</div>
         </div>
       </div>

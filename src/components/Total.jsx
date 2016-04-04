@@ -14,7 +14,7 @@ var Total = React.createClass({
   render: function () {
     var totals = this.props.portfolio.totals;
 
-    var changePercentClassName = 'change-percent';
+    var changePercentClassName = 'loaded-text change-percent';
     var percentChangeTodayString = '';
     if (totals !== undefined) {
       if (totals.percentChangeToday >= 0) {
@@ -26,7 +26,7 @@ var Total = React.createClass({
       var percentChangeTodayString = numeral(totals.percentChangeToday).format('0,0.00%');
     }
 
-    var changeDollarClassName = 'holding-change';
+    var changeDollarClassName = 'loaded-text holding-change';
     var changeDollarTodayString = '';
     if (totals !== undefined) {
       if (totals.dollarChangeToday >= 0) {
@@ -46,15 +46,15 @@ var Total = React.createClass({
           </h2>
         </div>
         <div className="hidden-xs col-sm-1">
-          <label>Cash</label>
-          <div className="price">{numeral(this.props.cash).format('$0,0.00')}</div>
+          <label className="loaded-label">Cash</label>
+          <div className="loaded-text price">{numeral(this.props.cash).format('$0,0.00')}</div>
         </div>
         <div className="hidden-xs col-sm-3 col-sm-offset-2">
-          <label>% Change Today</label>
+          <label className="loaded-label">% Change Today</label>
           <div className={changePercentClassName}>{percentChangeTodayString}</div>
         </div>
         <div className="col-xs-6 col-sm-3">
-          <label className="holding-change-label">$ Change Today</label>
+          <label className="loaded-label holding-change-label">$ Change Today</label>
           <div className={changeDollarClassName}>{changeDollarTodayString}</div>
         </div>
       </div>
