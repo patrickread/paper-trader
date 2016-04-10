@@ -42,7 +42,7 @@ var Total = React.createClass({
       <div className="row">
         <div className="col-xs-6 col-sm-3">
           <h2>
-            Totals
+            Summary
           </h2>
         </div>
         <div className="hidden-xs col-sm-1">
@@ -55,7 +55,7 @@ var Total = React.createClass({
         </div>
         <div className="col-xs-6 col-sm-3">
           <label className="loaded-label holding-change-label">$ Change Today</label>
-          <div className={changeDollarClassName}>{changeDollarTodayString}</div>
+          <h1 className={changeDollarClassName}>{changeDollarTodayString}</h1>
         </div>
       </div>
     </div>

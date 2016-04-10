@@ -11,11 +11,11 @@ var LoadingDialog = React.createClass({
 
   render: function () {
     
-    return <div className="loading-dialog">
+    return <dialog className="loading-dialog">
       <div>
         Infiltrating the exchanges…
       </div>
-    </div>
+    </dialog>
   }
 })
 

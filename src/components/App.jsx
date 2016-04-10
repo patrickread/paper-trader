@@ -2,6 +2,7 @@ import React from 'react'
 
 import Portfolio from './Models/Portfolio'
 import Header from './Shared/Header'
+import { Tabs, Tab } from 'react-mdl'
 import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
 import StockLine from './StockLine'
@@ -16,6 +17,7 @@ var App = React.createClass({
   getInitialState: function () {
     return {
       loading: true,
+      activeTab: 1,
       transactions: [
         {
           key: 1,
@@ -94,9 +96,15 @@ var App = React.createClass({
 
     return <div style={this.props.style} className={appClassName}>
       <Header></Header>
+      <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
+        <Tab>Portfolio</Tab>
+        <Tab>Transactions</Tab>
+        <Tab>Settings</Tab>
+      </Tabs>
       <section className="content">
-        {stockLines}
         <Total cash={this.state.cash} portfolio={this.state.portfolio}></Total>
+        <hr />
+        {stockLines}
       </section>
       <AddButton>
       </AddButton>

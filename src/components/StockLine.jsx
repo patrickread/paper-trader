@@ -43,7 +43,7 @@ var StockLine = React.createClass({
         </div>
         <div className="col-xs-6 col-sm-3">
           <label className="loaded-label holding-change-label">$ Change Today</label>
-          <div className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</div>
+          <h1 className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</h1>
         </div>
       </div>
       <div className="row toolbar">
