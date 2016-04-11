@@ -23,7 +23,7 @@ Inside your root component:
 ```javascript
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DentistSearchMap from 'dentist-search-map'
+import PaperTrader from 'paper-trader'
 
 var style = {
   height: '550px',
