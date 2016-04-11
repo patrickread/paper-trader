@@ -17,7 +17,7 @@ var App = React.createClass({
   getInitialState: function () {
     return {
       loading: true,
-      activeTab: 1,
+      activeTab: 0,
       transactions: [
         {
           key: 1,

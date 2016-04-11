@@ -71,6 +71,56 @@ html, body
       left: 25px;
       margin: 0px;
     }
+
+    .login-button
+    {
+      width: 94px;
+      height: 36px;
+      outline: none;
+      position: absolute;
+      top: 37px;
+      right: 48px;
+      border: none;
+      background: #009688;
+      box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 2px 2px 0px rgba(0,0,0,0.24);
+      border-radius: 2px;
+      /* LOGIN: */
+      font-family: 'Roboto-Medium', sans-serif;
+      font-size: 14px;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .user-button
+    {
+      position: absolute;
+      top: 31px;
+      right: 48px;
+
+      .user-email
+      {
+        color: #fff;
+        font-weight: 300;
+        margin-right: 15px;
+        font-family: 'Roboto', sans-serif;
+        letter-spacing: 0.5px;
+      }
+
+      @media (max-width: 468px) {
+        .user-email
+        {
+          display: none;
+        }
+      }
+
+      .user-avatar
+      {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+    }
   }
 
   .mdl-tabs
