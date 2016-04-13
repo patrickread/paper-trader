@@ -53,8 +53,14 @@ var LoginButton = React.createClass({
       "principal": "arn:aws:iam::462736229559:saml-provider/auth0"
     };
 
+    var that = this;
+
     auth0.getDelegationToken(options, function(err, delegationResult) {
-      this.setState({ awsCredentials: delegationResult.Credentials });
+      that.setState({ awsCredentials: delegationResult.Credentials });
+
+      if (that.props.loginCompleted !== undefined) {
+        that.props.loginCompleted(delegationResult.Credentials);
+      }
     });
   },
 

@@ -14,7 +14,7 @@ var Header = React.createClass({
     
     return <header style={this.props.style}>
       <h1>Paper Trader</h1>
-      <LoginButton />
+      <LoginButton loginCompleted={this.props.loginCompleted} />
     </header>
   }
 })

@@ -7,6 +7,7 @@ import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
 import StockLine from './StockLine'
 import Total from './Total'
+import AWSHandler from './Apis/AWS/AWSHandler'
 
 require('velocity-animate');
 require('velocity-animate/velocity.ui');
@@ -95,7 +96,7 @@ var App = React.createClass({
     }
 
     return <div style={this.props.style} className={appClassName}>
-      <Header></Header>
+      <Header loginCompleted={this.loginCompleted}></Header>
       <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
         <Tab>Portfolio</Tab>
         <Tab>Transactions</Tab>
@@ -114,6 +115,15 @@ var App = React.createClass({
 
   trade: function(symbol) {
     console.log("Gonna trade " + symbol + "! Not implemented yet, though.");
+  },
+
+  loginCompleted: function(awsCredentials) {
+    var awsHandler = new AWSHandler(awsCredentials);
+    awsHandler.getTransactions();
+  },
+
+  transactionsLoaded: function(transactions) {
+    this.setState({ transactions: transactions });
   }
 })
 
