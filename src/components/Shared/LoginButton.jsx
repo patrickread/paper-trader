@@ -57,6 +57,7 @@ var LoginButton = React.createClass({
 
     auth0.getDelegationToken(options, function(err, delegationResult) {
       that.setState({ awsCredentials: delegationResult.Credentials });
+      reactCookie.save('awsCredentials', delegationResult.Credentials, { expires: new Date(Date.now() + 86400000) })
 
       if (that.props.loginCompleted !== undefined) {
         that.props.loginCompleted(delegationResult.Credentials);

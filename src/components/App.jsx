@@ -57,11 +57,78 @@ var App = React.createClass({
           commission: 7.00
         }
       ],
-      cash: 1034.97
+      cash: 1034.97,
+      portfolio: { holdings: [] }
     }
   },
 
   componentWillMount: function () {
+    // Check for pre-saved AWS credentials
+    var awsCredentials = reactCookie.load('awsCredentials');
+    if (awsCredentials !== undefined) {
+      this.loadTransactionsFromAWS(awsCredentials);
+    }
+  },
+
+  componentWillUnmount () {
+    
+  },
+
+  render: function () {
+    var stockLines = []
+
+    var appClassName = 'paper-trader-app';
+
+    var awsCredentials = reactCookie.load('awsCredentials');
+    if (awsCredentials !== undefined) {
+      if (this.state.loading) {
+        appClassName += ' loading';
+      }
+
+      for (var stock of this.state.portfolio.holdings) {
+        stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
+                        </StockLine>)
+      }
+
+      var authedSection = 
+        <div>
+          <section className="content">
+            <Total cash={this.state.cash} portfolio={this.state.portfolio}></Total>
+            <hr />
+            {stockLines}
+          </section>
+          <AddButton>
+          </AddButton>
+        </div>
+    }
+
+    return <div style={this.props.style} className={appClassName}>
+      <Header loginCompleted={this.loadTransactionsFromAWS}></Header>
+      <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
+        <Tab>Portfolio</Tab>
+        <Tab>Transactions</Tab>
+        <Tab>Settings</Tab>
+      </Tabs>
+      {authedSection}
+      <LoadingDialog></LoadingDialog>
+    </div>
+  },
+
+  trade: function(symbol) {
+    console.log("Gonna trade " + symbol + "! Not implemented yet, though.");
+  },
+
+  loadTransactionsFromAWS: function(awsCredentials) {
+    var awsHandler = new AWSHandler(awsCredentials);
+    awsHandler.getTransactions(this.transactionsLoaded);
+  },
+
+  transactionsLoaded: function(transactions) {
+    this.setState({ transactions: transactions });
+    this.loadPortfolioFromTransactions();
+  },
+
+  loadPortfolioFromTransactions: function() {
     var portfolio = new Portfolio(this.state.transactions);
     var that = this;
 
@@ -76,54 +143,6 @@ var App = React.createClass({
         portfolio: portfolio
       })
     });
-  },
-
-  componentWillUnmount () {
-    
-  },
-
-  render: function () {
-    var stockLines = []
-
-    var appClassName = 'paper-trader-app';
-    if (this.state.loading) {
-      appClassName += ' loading';
-    }
-
-    for (var stock of this.state.portfolio.holdings) {
-      stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
-                      </StockLine>)
-    }
-
-    return <div style={this.props.style} className={appClassName}>
-      <Header loginCompleted={this.loginCompleted}></Header>
-      <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
-        <Tab>Portfolio</Tab>
-        <Tab>Transactions</Tab>
-        <Tab>Settings</Tab>
-      </Tabs>
-      <section className="content">
-        <Total cash={this.state.cash} portfolio={this.state.portfolio}></Total>
-        <hr />
-        {stockLines}
-      </section>
-      <AddButton>
-      </AddButton>
-      <LoadingDialog></LoadingDialog>
-    </div>
-  },
-
-  trade: function(symbol) {
-    console.log("Gonna trade " + symbol + "! Not implemented yet, though.");
-  },
-
-  loginCompleted: function(awsCredentials) {
-    var awsHandler = new AWSHandler(awsCredentials);
-    awsHandler.getTransactions();
-  },
-
-  transactionsLoaded: function(transactions) {
-    this.setState({ transactions: transactions });
   }
 })
 

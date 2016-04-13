@@ -1,5 +1,4 @@
 //import * as apigClientFactory from '../AWS/JSSDK/apigClientFactory'
-import ApiClient from './JSSDK/APIClient'
 
 class AWSHandler {
   constructor(credentials) {
@@ -7,7 +6,7 @@ class AWSHandler {
   }
 
   getSecureApiClient() {
-    this.apiClient = new ApiClient({
+    this.apiClient = apigClientFactory.newClient({
         accessKey: this.credentials.AccessKeyId,
         secretKey: this.credentials.SecretAccessKey,
         sessionToken: this.credentials.SessionToken,
@@ -19,7 +18,12 @@ class AWSHandler {
 
   getTransactions(getTransactionsSucceeded) {
     var apiClient = this.getSecureApiClient();
-    apiClient.transactionsGet(getTransactionsSucceeded);
+    apiClient.transactionsGet({},{})
+      .then(function(response) {
+        getTransactionsSucceeded(response.data.transactions);
+      }).catch(function(response) {
+        console.log("Error getting transactions: " + response);
+      });
   }
 }
 
