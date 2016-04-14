@@ -18,29 +18,32 @@ var Total = React.createClass({
     var percentChangeTodayString = '';
     if (totals !== undefined) {
       var percentChangeToday = totals.percentChangeToday;
-      if (percentChangeToday >= 0) {
-        changePercentClassName += ' positive';
-      } else {
-        changePercentClassName += ' negative';
-      }
 
       var percentChangeTodayString = 'N/A';
 
       if (percentChangeToday !== undefined && !isNaN(percentChangeToday)) {
         percentChangeTodayString = numeral(totals.percentChangeToday).format('0,0.00%');
       }
+
+      if (percentChangeToday >= 0) {
+        changePercentClassName += ' positive';
+        percentChangeTodayString = percentChangeTodayString.replace(/^/, '+');
+      } else {
+        changePercentClassName += ' negative';
+      }
     }
 
     var changeDollarClassName = 'loaded-text holding-change';
     var changeDollarTodayString = '';
     if (totals !== undefined) {
+      var changeDollarTodayString = numeral(totals.dollarChangeToday).format('$0,0.00');
+
       if (totals.dollarChangeToday >= 0) {
         changeDollarClassName += ' positive';
+        changeDollarTodayString = changeDollarTodayString.replace(/^/, '+');
       } else {
         changeDollarClassName += ' negative';
       }
-
-      var changeDollarTodayString = numeral(totals.dollarChangeToday).format('$0,0.00');
     }
 
     return <div style={this.props.style} className='stock-line total-line container'>

@@ -103,7 +103,7 @@ var App = React.createClass({
     }
 
     return <div style={this.props.style} className={appClassName}>
-      <Header loginCompleted={this.loadTransactionsFromAWS} logoutCompleted={this.resetUI}></Header>
+      <Header loginStarted={this.loginStarted} loginCompleted={this.loadTransactionsFromAWS} logoutCompleted={this.resetUI}></Header>
       <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
         <Tab>Portfolio</Tab>
         <Tab>Transactions</Tab>
@@ -116,6 +116,10 @@ var App = React.createClass({
 
   trade: function(symbol) {
     console.log("Gonna trade " + symbol + "! Not implemented yet, though.");
+  },
+
+  loginStarted: function() {
+    this.setState({ loading: true });
   },
 
   loadTransactionsFromAWS: function(awsCredentials) {
@@ -133,7 +137,7 @@ var App = React.createClass({
   },
 
   transactionsLoaded: function(transactions) {
-    this.setState({ transactions: transactions });
+    this.setState({ loading: false, transactions: transactions });
     this.loadPortfolioFromTransactions();
   },
 

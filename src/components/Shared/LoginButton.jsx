@@ -1,11 +1,12 @@
 import React from 'react'
-import Auth0Lock from 'auth0-lock'
-import Auth0 from 'auth0-js'
-import cookie from 'react-cookie'
+
+import SessionService from '../Apis/SessionService'
 
 var LoginButton = React.createClass({
   getInitialState: function () {
-    var profile = reactCookie.load('profile');
+    this.sessionService = new SessionService();
+    var profile = this.sessionService.getProfile();
+
     return {
       profile: profile || null,
       panelOpen: false
@@ -21,54 +22,21 @@ var LoginButton = React.createClass({
   },
 
   openLoginDialog: function(event) {
-    var that = this;
     event.preventDefault();
-    var lock = new Auth0Lock('XNwuDLFBYLgKT24xr8MhT004LNNkSKrB', 'beamtech.auth0.com');
-    lock.show({
-      authParams: {
-          scope: 'openid email'
-        }
-    }, function onLogin(err, profile, id_token) {
-      if (err) {
-        // There was an error logging the user in
-        return alert(err.message);
-      } else {
-        that.setState({ profile: profile });
 
-        // also save in a cookie
-        reactCookie.save('profile', profile, { expires: new Date(Date.now() + 86400000) })
-        reactCookie.save('id_token', id_token, { expires: new Date(Date.now() + 86400000) });
-
-        that.getDelegationToken(id_token);
-      }
-
-      // User is logged in
+    this.props.loginStarted();
+    this.sessionService.login(this.loginCompleted, function(err) {
+      alert(err.message);
     });
   },
 
-  getDelegationToken: function(id_token) {
-    var auth0 = new Auth0({
-      domain:       'beamtech.auth0.com',
-      clientID:     'XNwuDLFBYLgKT24xr8MhT004LNNkSKrB',
-      callbackURL:  'dummy'
-    });
+  loginCompleted: function(profile, credentials) {
+    this.setState({ profile: profile });
+    this.setState({ awsCredentials: credentials });
 
-    var options = {
-      "id_token": id_token,
-      "role":"arn:aws:iam::462736229559:role/access-to-api-gateway-per-user",
-      "principal": "arn:aws:iam::462736229559:saml-provider/auth0"
-    };
-
-    var that = this;
-
-    auth0.getDelegationToken(options, function(err, delegationResult) {
-      that.setState({ awsCredentials: delegationResult.Credentials });
-      reactCookie.save('awsCredentials', delegationResult.Credentials, { expires: new Date(Date.now() + 86400000) })
-
-      if (that.props.loginCompleted !== undefined) {
-        that.props.loginCompleted(delegationResult.Credentials);
-      }
-    });
+    if (this.props.loginCompleted !== undefined) {
+      this.props.loginCompleted(credentials);
+    }
   },
 
   render: function () {
@@ -99,10 +67,7 @@ var LoginButton = React.createClass({
   logout: function(event) {
     event.preventDefault();
 
-    // Remove cookies
-    reactCookie.remove('profile');
-    reactCookie.remove('awsCredentials');
-    reactCookie.remove('id_token');
+    this.sessionService.logout();
 
     // Update UI
     this.setState({
