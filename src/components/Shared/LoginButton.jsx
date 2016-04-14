@@ -7,7 +7,8 @@ var LoginButton = React.createClass({
   getInitialState: function () {
     var profile = reactCookie.load('profile');
     return {
-      profile: profile || null
+      profile: profile || null,
+      panelOpen: false
     }
   },
 
@@ -66,11 +67,45 @@ var LoginButton = React.createClass({
   },
 
   render: function () {
+    var loginPanelClasses = 'login-panel';
+    if (this.state.panelOpen) {
+      loginPanelClasses += ' open';
+    }
+
     if (this.state.profile !== null) {
-      return <div className="user-button"><span className="user-email">{this.state.profile.email}</span><img className="user-avatar" src={this.state.profile.picture} /></div>
+      return <div onClick={this.buttonToggled} className="user-button">
+                <span className="user-email">{this.state.profile.email}</span>
+                <img className="user-avatar" src={this.state.profile.picture} />
+                <div className={loginPanelClasses}>
+                  <ul className="user-settings-menu">
+                    <li onClick={this.logout}>Logout</li>
+                  </ul>
+                </div>
+              </div>
     } else {
       return <button className="login-button" onClick={this.openLoginDialog}>Login</button>
     }
+  },
+
+  buttonToggled: function() {
+    this.setState({ panelOpen: !this.state.panelOpen });
+  },
+
+  logout: function(event) {
+    event.preventDefault();
+
+    // Remove cookies
+    reactCookie.remove('profile');
+    reactCookie.remove('awsCredentials');
+
+    // Update UI
+    this.setState({
+      profile: null,
+      awsCredentials: null
+    });
+
+    // Update other components
+    this.props.logoutCompleted();
   }
 })
 

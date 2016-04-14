@@ -96,6 +96,7 @@ html, body
       position: absolute;
       top: 31px;
       right: 48px;
+      cursor: pointer;
 
       .user-email
       {
@@ -118,6 +119,47 @@ html, body
         width: 50px;
         height: 50px;
         border-radius: 50%;
+      }
+
+      .login-panel
+      {
+        display: none;
+        position: relative;
+        background: #ffffff;
+
+        &:after {
+          bottom: 100%;
+          left: 50%;
+          border: solid transparent;
+          content: " ";
+          height: 0;
+          width: 0;
+          position: absolute;
+          pointer-events: none;
+          border-color: rgba(255, 255, 255, 0);
+          border-bottom-color: #ffffff;
+          border-width: 10px;
+          margin-left: -10px;
+        }
+
+        &.open
+        {
+          display: block;
+          margin-top: 5px;
+          box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 2px 2px 0px rgba(0,0,0,0.24);
+          border-radius: 3px;
+
+          ul
+          {
+            list-style: none;
+
+            li
+            {
+              padding: 10px;
+              cursor: pointer;
+            }
+          }
+        }
       }
     }
   }

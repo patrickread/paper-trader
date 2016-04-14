@@ -103,7 +103,7 @@ var App = React.createClass({
     }
 
     return <div style={this.props.style} className={appClassName}>
-      <Header loginCompleted={this.loadTransactionsFromAWS}></Header>
+      <Header loginCompleted={this.loadTransactionsFromAWS} logoutCompleted={this.resetUI}></Header>
       <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
         <Tab>Portfolio</Tab>
         <Tab>Transactions</Tab>
@@ -121,6 +121,15 @@ var App = React.createClass({
   loadTransactionsFromAWS: function(awsCredentials) {
     var awsHandler = new AWSHandler(awsCredentials);
     awsHandler.getTransactions(this.transactionsLoaded);
+  },
+
+  // We've logged out; reset everything
+  resetUI: function() {
+    this.setState({
+      transactions: null,
+      portfolio: { holdings: [] },
+      cash: null
+    })
   },
 
   transactionsLoaded: function(transactions) {

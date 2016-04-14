@@ -17,13 +17,18 @@ var Total = React.createClass({
     var changePercentClassName = 'loaded-text change-percent';
     var percentChangeTodayString = '';
     if (totals !== undefined) {
-      if (totals.percentChangeToday >= 0) {
+      var percentChangeToday = totals.percentChangeToday;
+      if (percentChangeToday >= 0) {
         changePercentClassName += ' positive';
       } else {
         changePercentClassName += ' negative';
       }
 
-      var percentChangeTodayString = numeral(totals.percentChangeToday).format('0,0.00%');
+      var percentChangeTodayString = 'N/A';
+
+      if (percentChangeToday !== undefined && !isNaN(percentChangeToday)) {
+        percentChangeTodayString = numeral(totals.percentChangeToday).format('0,0.00%');
+      }
     }
 
     var changeDollarClassName = 'loaded-text holding-change';
