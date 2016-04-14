@@ -24,7 +24,11 @@ var LoginButton = React.createClass({
     var that = this;
     event.preventDefault();
     var lock = new Auth0Lock('XNwuDLFBYLgKT24xr8MhT004LNNkSKrB', 'beamtech.auth0.com');
-    lock.show(function onLogin(err, profile, id_token) {
+    lock.show({
+      authParams: {
+          scope: 'openid email'
+        }
+    }, function onLogin(err, profile, id_token) {
       if (err) {
         // There was an error logging the user in
         return alert(err.message);
@@ -33,6 +37,7 @@ var LoginButton = React.createClass({
 
         // also save in a cookie
         reactCookie.save('profile', profile, { expires: new Date(Date.now() + 86400000) })
+        reactCookie.save('id_token', id_token, { expires: new Date(Date.now() + 86400000) });
 
         that.getDelegationToken(id_token);
       }
@@ -97,6 +102,7 @@ var LoginButton = React.createClass({
     // Remove cookies
     reactCookie.remove('profile');
     reactCookie.remove('awsCredentials');
+    reactCookie.remove('id_token');
 
     // Update UI
     this.setState({

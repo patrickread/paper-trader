@@ -91,7 +91,7 @@ apigClientFactory.newClient = function (config) {
         var transactionsGetRequest = {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/transactions').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            headers: apiGateway.core.utils.parseParametersToObject(params, ['authToken']),
             queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
             body: body
         };

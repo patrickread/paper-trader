@@ -1,4 +1,4 @@
-//import * as apigClientFactory from '../AWS/JSSDK/apigClientFactory'
+import cookie from 'react-cookie'
 
 class AWSHandler {
   constructor(credentials) {
@@ -18,7 +18,12 @@ class AWSHandler {
 
   getTransactions(getTransactionsSucceeded) {
     var apiClient = this.getSecureApiClient();
-    apiClient.transactionsGet({},{})
+    var token = reactCookie.load('id_token');
+    var headers = {
+      authToken: token
+    }
+
+    apiClient.transactionsGet(headers,{})
       .then(function(response) {
         getTransactionsSucceeded(response.data.transactions);
       }).catch(function(response) {
