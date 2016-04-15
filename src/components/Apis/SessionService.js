@@ -11,7 +11,7 @@ class SessionService {
   }
 
   getProfile() {
-    reactCookie.load('profile');
+    return reactCookie.load('profile');
   }
 
   login(successCallback, failureCallback) {

@@ -17,48 +17,13 @@ import '../assets/css/app.less'
 var App = React.createClass({
   getInitialState: function () {
     return {
-      loading: true,
+      loadingDialog: {
+        open: false,
+        message: ""
+      },
       activeTab: 0,
-      transactions: [
-        {
-          key: 1,
-          symbol: 'AAPL',
-          name: 'Apple Inc.',
-          timestamp: new Date(2014, 9, 30),
-          shares: 40,
-          price: 100.78,
-          commission: 5.05
-        },
-        {
-          key: 2,
-          symbol: 'AAPL',
-          name: 'Apple Inc.',
-          timestamp: new Date(2014, 10, 14),
-          shares: 30,
-          price: 98.64,
-          commission: 5.03
-        },
-        {
-          key: 3,
-          symbol: 'TWTR',
-          name: 'Twitter Inc.',
-          timestamp: new Date(2015, 4, 29),
-          shares: 52,
-          price: 38.12,
-          commission: 7.00
-        },
-        {
-          key: 4,
-          symbol: 'TWTR',
-          name: 'Twitter Inc.',
-          timestamp: new Date(2015, 5, 29),
-          shares: 53,
-          price: 36.81,
-          commission: 7.00
-        }
-      ],
-      cash: 1034.97,
-      portfolio: { holdings: [] }
+      transactions: [ ],
+      portfolio: { holdings: [], cash: null }
     }
   },
 
@@ -81,19 +46,27 @@ var App = React.createClass({
 
     var awsCredentials = reactCookie.load('awsCredentials');
     if (awsCredentials !== undefined) {
-      if (this.state.loading) {
+      if (this.state.loadingDialog.open) {
         appClassName += ' loading';
       }
 
-      for (var stock of this.state.portfolio.holdings) {
-        stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
-                        </StockLine>)
+      if (this.state.portfolio.holdings.length > 0) {
+        for (var stock of this.state.portfolio.holdings) {
+          stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
+                          </StockLine>)
+        }
+      } else {
+        var blankStock = Portfolio.blankStock();
+        for (var i=0; i<3; i++) {
+          stockLines.push(<StockLine key={i} blankEntry={true} stock={blankStock}>
+                            </StockLine>)
+        }
       }
 
       var authedSection = 
         <div>
           <section className="content">
-            <Total cash={this.state.cash} portfolio={this.state.portfolio}></Total>
+            <Total cash={this.state.portfolio.cash} portfolio={this.state.portfolio}></Total>
             <hr />
             {stockLines}
           </section>
@@ -110,7 +83,7 @@ var App = React.createClass({
         <Tab>Settings</Tab>
       </Tabs>
       {authedSection}
-      <LoadingDialog></LoadingDialog>
+      <LoadingDialog message={this.state.loadingDialog.message}></LoadingDialog>
     </div>
   },
 
@@ -119,10 +92,22 @@ var App = React.createClass({
   },
 
   loginStarted: function() {
-    this.setState({ loading: true });
+    this.setState({ 
+      loadingDialog: {
+        open: true,
+        message: "Logging in…"
+      }
+    });
   },
 
   loadTransactionsFromAWS: function(awsCredentials) {
+    this.setState({
+      loadingDialog: {
+        open: true,
+        message: "Acquiring the portfolio…"
+      }
+    });
+
     var awsHandler = new AWSHandler(awsCredentials);
     awsHandler.getTransactions(this.transactionsLoaded);
   },
@@ -131,13 +116,15 @@ var App = React.createClass({
   resetUI: function() {
     this.setState({
       transactions: null,
-      portfolio: { holdings: [] },
-      cash: null
+      portfolio: { holdings: [], cash: null }
     })
   },
 
   transactionsLoaded: function(transactions) {
-    this.setState({ loading: false, transactions: transactions });
+    this.setState({ loadingDialog: {
+      open: true,
+      message: "Infiltrating the exchanges…"
+    }, transactions: transactions });
     this.loadPortfolioFromTransactions();
   },
 
@@ -152,7 +139,10 @@ var App = React.createClass({
     portfolio.updateHoldingsFromAPI(function() {
       // refresh portfolio with new data
       that.setState({
-        loading: false,
+        loadingDialog: {
+          open: false,
+          message: ""
+        },
         portfolio: portfolio
       })
     });

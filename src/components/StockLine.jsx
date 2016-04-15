@@ -24,13 +24,23 @@ var StockLine = React.createClass({
   },
 
   render: function () {
-    var changePercentClassName = "loaded-text change-percent " + this.props.stock.changePercentObj.className;
-    var holdingChangeClassName = "loaded-text holding-change " + this.props.stock.holdingChangeObj.className;
+    var changePercentClassName = "loaded-text change-percent ";
+    var holdingChangeClassName = "loaded-text holding-change ";
+    if (this.props.stock !== undefined) {
+      changePercentClassName += this.props.stock.changePercentObj.className;
+      holdingChangeClassName += this.props.stock.holdingChangeObj.className;
+    }
 
-    return <div style={this.props.style} className='stock-line container'>
+    var topLineClasses = 'stock-line container';
+
+    if (this.props.blankEntry) {
+      topLineClasses += ' blank-entry';
+    }
+
+    return <div style={this.props.style} className={topLineClasses}>
       <div className="row">
         <div className="col-xs-6 col-sm-3">
-          <label className="name">{this.props.stock.name}</label>
+          <label className="name">{this.props.stock.name || ''}</label>
           <h1 className="symbol">{this.props.stock.symbol}</h1>
         </div>
         <div className="hidden-xs col-sm-2">

@@ -13,7 +13,7 @@ var LoadingDialog = React.createClass({
     
     return <dialog className="loading-dialog">
       <div>
-        Infiltrating the exchanges…
+        {this.props.message}
       </div>
     </dialog>
   }

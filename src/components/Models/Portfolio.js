@@ -7,6 +7,25 @@ class Portfolio {
   constructor(transactions) {
     this.transactions = transactions;
     this.holdings = this.calculateHoldings();
+    this.cash = 1034.56;
+  }
+
+  static blankStock() {
+    return {
+      key: 1,
+      symbol: 'PAPR',
+      name: 'Paper',
+      changePercentObj: {
+        number: 0,
+        string: "…",
+        className: ""
+      },
+      holdingChangeObj: {
+        number: 0,
+        string: "…",
+        className: ""
+      }
+    };
   }
 
   calculateHoldings() {
