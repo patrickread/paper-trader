@@ -9,10 +9,7 @@ import StockLine from './StockLine'
 import Total from './Total'
 import AWSHandler from './Apis/AWS/AWSHandler'
 
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
-
-import '../assets/css/app.less'
+import '../styles/app.less'
 
 var App = React.createClass({
   getInitialState: function () {
