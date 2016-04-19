@@ -123,6 +123,7 @@ var App = React.createClass({
     });
 
     var awsHandler = new AWSHandler(awsCredentials);
+
     awsHandler.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
   },
 

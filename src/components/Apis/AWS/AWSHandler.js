@@ -31,6 +31,23 @@ class AWSHandler {
         getTransactionsFailed(response);
       });
   }
+
+  createTransaction(transaction, createSucceeded, createFailed) {
+    var apiClient = this.getSecureApiClient();
+    var token = reactCookie.load('id_token');
+    var headers = {
+      authToken: token
+    }
+
+    apiClient.transactionsPost(headers, transaction)
+      .then(function(response) {
+        createSucceeded(response.data);
+      }).catch(function(response) {
+        console.log("Error posting transaction.");
+        console.log(response);
+        createFailed(response);
+      });
+  }
 }
 
 export default AWSHandler
