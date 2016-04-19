@@ -11,7 +11,7 @@ var AddButton = React.createClass({
 
   render: function () {
     
-    return <button className="add-button">
+    return <button className="add-button" onClick={this.props.onClick}>
       <div className="icon icon-plus">
       </div>
     </button>

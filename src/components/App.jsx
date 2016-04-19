@@ -5,6 +5,7 @@ import Header from './Shared/Header'
 import { Tabs, Tab } from 'react-mdl'
 import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
+import CreateTransaction from './CreateTransaction'
 import StockLine from './StockLine'
 import Total from './Total'
 import AWSHandler from './Apis/AWS/AWSHandler'
@@ -16,11 +17,16 @@ var App = React.createClass({
     return {
       loadingDialog: {
         open: false,
+        error: false,
         message: ""
       },
       activeTab: 0,
       transactions: [ ],
-      portfolio: { holdings: [], cash: null }
+      portfolio: { holdings: [], cash: null },
+      createTransactionDialogOpen: false,
+      newTransaction: {
+
+      }
     }
   },
 
@@ -45,6 +51,8 @@ var App = React.createClass({
     if (awsCredentials !== undefined) {
       if (this.state.loadingDialog.open) {
         appClassName += ' loading';
+      } else if (this.state.createTransactionDialogOpen) {
+        appClassName += ' creating-transaction';
       }
 
       if (this.state.portfolio.holdings.length > 0) {
@@ -67,12 +75,14 @@ var App = React.createClass({
             <hr />
             {stockLines}
           </section>
-          <AddButton>
+          <AddButton onClick={this.openCreateTransactionDialog}>
           </AddButton>
         </div>
     }
 
-    return <div style={this.props.style} className={appClassName}>
+    var newTransaction = this.state.newTransaction;
+
+    return <div style={this.props.style} className={appClassName} onClick={this.appClicked}>
       <Header loginStarted={this.loginStarted} loginCompleted={this.loadTransactionsFromAWS} logoutCompleted={this.resetUI}></Header>
       <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
         <Tab>Portfolio</Tab>
@@ -81,11 +91,18 @@ var App = React.createClass({
       </Tabs>
       {authedSection}
       <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
+      <CreateTransaction success={this.transactionSucceeded} cancel={this.transactionCancelled} {...newTransaction}></CreateTransaction>
     </div>
   },
 
-  trade: function(symbol) {
-    console.log("Gonna trade " + symbol + "! Not implemented yet, though.");
+  trade: function(symbol, price) {
+    this.setState({
+      newTransaction: {
+        symbol: symbol,
+        price: price
+      },
+      createTransactionDialogOpen: true
+    });
   },
 
   loginStarted: function() {
@@ -151,6 +168,36 @@ var App = React.createClass({
         portfolio: portfolio
       })
     });
+  },
+
+  openCreateTransactionDialog: function() {
+    this.setState({
+      newTransaction: {
+        symbol: null
+      },
+      createTransactionDialogOpen: true
+    })
+  },
+
+  transactionSucceeded: function() {
+    this.setState({
+      createTransactionDialogOpen: false
+    });
+  },
+
+  transactionCancelled: function() {
+    this.setState({
+      createTransactionDialogOpen: false
+    });
+  },
+
+  appClicked: function(event) {
+    if (this.state.createTransactionDialogOpen) {
+      this.setState({
+        createTransactionDialogOpen: false
+      });
+      event.stopPropagation();
+    }
   }
 })
 
