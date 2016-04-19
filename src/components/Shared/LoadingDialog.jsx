@@ -10,8 +10,11 @@ var LoadingDialog = React.createClass({
   },
 
   render: function () {
-    
-    return <dialog className="loading-dialog">
+    var classes = "loading-dialog";
+    if (this.props.error) {
+      classes += " error";
+    }
+    return <dialog className={classes}>
       <div>
         {this.props.message}
       </div>

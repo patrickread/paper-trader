@@ -16,7 +16,7 @@ class AWSHandler {
     return this.apiClient;
   }
 
-  getTransactions(getTransactionsSucceeded) {
+  getTransactions(getTransactionsSucceeded, getTransactionsFailed) {
     var apiClient = this.getSecureApiClient();
     var token = reactCookie.load('id_token');
     var headers = {
@@ -28,6 +28,7 @@ class AWSHandler {
         getTransactionsSucceeded(response.data.transactions);
       }).catch(function(response) {
         console.log("Error getting transactions: " + response);
+        getTransactionsFailed(response);
       });
   }
 }

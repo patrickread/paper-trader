@@ -80,7 +80,7 @@ var App = React.createClass({
         <Tab>Settings</Tab>
       </Tabs>
       {authedSection}
-      <LoadingDialog message={this.state.loadingDialog.message}></LoadingDialog>
+      <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
     </div>
   },
 
@@ -106,7 +106,7 @@ var App = React.createClass({
     });
 
     var awsHandler = new AWSHandler(awsCredentials);
-    awsHandler.getTransactions(this.transactionsLoaded);
+    awsHandler.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
   },
 
   // We've logged out; reset everything
@@ -123,6 +123,14 @@ var App = React.createClass({
       message: "Infiltrating the exchanges…"
     }, transactions: transactions });
     this.loadPortfolioFromTransactions();
+  },
+
+  transactionsFailedToLoad: function(response) {
+    this.setState({ loadingDialog: {
+      open: true,
+      error: true,
+      message: "Uh Oh! It seems there was a problem loading your portfolio. Please logout and log back in and see if that helps."
+    }});
   },
 
   loadPortfolioFromTransactions: function() {
