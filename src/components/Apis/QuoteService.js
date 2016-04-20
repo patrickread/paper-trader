@@ -1,36 +1,48 @@
-var Markit = {};
-/**
-* Define the QuoteService.
-* First argument is stock for the quote.
-*/
-Markit.QuoteService = function(stock) {
-    this.stock = stock;
-    this.DATA_SRC = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
-    this.requestPromise = this.makeRequest();
-};
+class QuoteService {
+  constructor(stock) {
+    this.ROOT_URL = "http://dev.markitondemand.com/Api/v2/";
+    this.QUOTE_URL = this.ROOT_URL + "Quote/jsonp";
+    this.LOOKUP_URL = this.ROOT_URL + "Lookup/jsonp";
+  }
 
-/** 
-* Starts a new ajax request to the Quote API
-* Returns a promise
-*/
-Markit.QuoteService.prototype.makeRequest = function() {
-  var that = this;
-  //Abort any open requests
-  if (that.xhr) { that.xhr.abort(); }
+  getQuote(stock) {
+    var that = this;
+    //Abort any open requests
+    if (that.xhr) { that.xhr.abort(); }
 
-  return new Promise(function(resolve, reject) {
-    $.ajax({
-      data: { symbol: that.stock.symbol },
-      url: that.DATA_SRC,
-      dataType: "jsonp",
-      context: that
-    }).done(function(data) {
-      data.stock = that.stock;
-      resolve(data);
-    }).fail(function(jqXHR, textStatus, err) {
-      reject(Error(err));
+    return new Promise(function(resolve, reject) {
+      $.ajax({
+        data: { symbol: stock.symbol },
+        url: that.QUOTE_URL,
+        dataType: "jsonp",
+        context: that
+      }).done(function(data) {
+        data.stock = stock;
+        resolve(data);
+      }).fail(function(jqXHR, textStatus, err) {
+        reject(Error(err));
+      });
     });
-  });
-};
+  }
 
-export default Markit
+  lookupCompany(symbol) {
+    var that = this;
+    //Abort any open requests
+    if (that.xhr) { that.xhr.abort(); }
+
+    return new Promise(function(resolve, reject) {
+      $.ajax({
+        data: { input: symbol },
+        url: that.LOOKUP_URL,
+        dataType: "jsonp",
+        context: that
+      }).done(function(data) {
+        resolve(data);
+      }).fail(function(jqXHR, textStatus, err) {
+        reject(Error(err));
+      });
+    });
+  }
+}
+
+export default QuoteService

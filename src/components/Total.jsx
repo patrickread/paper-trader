@@ -35,7 +35,7 @@ var Total = React.createClass({
 
     var changeDollarClassName = 'loaded-text holding-change';
     var changeDollarTodayString = '';
-    if (totals !== undefined) {
+    if (totals !== undefined && !isNaN(totals.dollarChangeToday)) {
       var changeDollarTodayString = numeral(totals.dollarChangeToday).format('$0,0.00');
 
       if (totals.dollarChangeToday >= 0) {

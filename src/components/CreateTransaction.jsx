@@ -1,4 +1,5 @@
 import React from 'react'
+import QuoteService from './Apis/QuoteService'
 
 var CreateTransaction = React.createClass({
   getInitialState: function () {
@@ -7,14 +8,15 @@ var CreateTransaction = React.createClass({
         shares: this.props.shares,
         symbol: this.props.symbol,
         price: this.props.price,
-        commission: this.props.commission
+        commission: this.props.commission,
+        type: "buy"
       }
     }
   },
 
   componentWillReceiveProps: function(newProps) {
     this.setState({
-      transaction: newProps
+      transaction: newProps.transaction
     })
   },
 
@@ -26,6 +28,39 @@ var CreateTransaction = React.createClass({
     
   },
 
+  handleChange: function(event) {
+    var targetName = event.target.name;
+    var value = event.target.value;
+
+    // validate here
+
+    var transaction = this.state.transaction;
+    transaction[targetName] = value;
+
+    this.setState({ transaction: transaction});
+  },
+
+  handleBlur: function(event) {
+    var targetName = event.target.name;
+    var value = event.target.value;
+
+    if (targetName === 'symbol') {
+      var quoteService = new QuoteService();
+      var that = this;
+      quoteService.lookupCompany(value).then(function(data) {
+        if (data.length > 0) {
+          var name = data[0].Name;
+          var transaction = that.state.transaction;
+          transaction.name = name;
+          
+          that.setState({
+            transaction: transaction
+          });
+        }
+      });
+    }
+  },
+
   render: function () {
     var classes = "create-transaction";
 
@@ -34,10 +69,10 @@ var CreateTransaction = React.createClass({
         <h1>Make a trade</h1>
         <section className="body">
           <div>
-            I would like to buy <input type="text" id="shares" name="shares" placeholder="12" value={this.state.transaction.shares} /> shares of <input type="text" id="symbol" name="symbol" placeholder="MSFT" value={this.state.transaction.symbol} /> for <input type="text" id="price" name="price" placeholder="$56.46" value={this.state.transaction.price} /> a share now.
+            I would like to buy <input type="text" id="shares" name="shares" placeholder="12" value={this.state.transaction.shares} onChange={this.handleChange} /> shares of <input type="text" id="symbol" name="symbol" placeholder="MSFT" value={this.state.transaction.symbol} onChange={this.handleChange} onBlur={this.handleBlur} /> for <input type="text" id="price" name="price" placeholder="$56.46" value={this.state.transaction.price} onChange={this.handleChange} /> a share now.
           </div>
           <div>
-            My broker charged me <input type="text" id="commission" name="commission" placeholder="$7.00" value={this.state.transaction.commission} /> commission on this deal.
+            My broker charged me <input type="text" id="commission" name="commission" placeholder="$7.00" value={this.state.transaction.commission} onChange={this.handleChange} /> commission on this deal.
           </div>
         </section>
         <section className="options">
@@ -53,7 +88,8 @@ var CreateTransaction = React.createClass({
   },
 
   confirmTransaction: function(event) {
-    this.props.success();
+    debugger;
+    this.props.needTransactionCreation(this.state.transaction);
   },
 
   cancel: function(event) {

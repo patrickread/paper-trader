@@ -80,7 +80,7 @@ var App = React.createClass({
         </div>
     }
 
-    var newTransaction = this.state.newTransaction;
+    var newTransaction = { transaction: this.state.newTransaction };
 
     return <div style={this.props.style} className={appClassName} onClick={this.appClicked}>
       <Header loginStarted={this.loginStarted} loginCompleted={this.loadTransactionsFromAWS} logoutCompleted={this.resetUI}></Header>
@@ -91,7 +91,7 @@ var App = React.createClass({
       </Tabs>
       {authedSection}
       <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
-      <CreateTransaction success={this.transactionSucceeded} cancel={this.transactionCancelled} {...newTransaction}></CreateTransaction>
+      <CreateTransaction needTransactionCreation={this.createTransaction} cancel={this.transactionCancelled} {...newTransaction}></CreateTransaction>
     </div>
   },
 
@@ -122,9 +122,9 @@ var App = React.createClass({
       }
     });
 
-    var awsHandler = new AWSHandler(awsCredentials);
+    this._awsHandler = new AWSHandler(awsCredentials);
 
-    awsHandler.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
+    this._awsHandler.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
   },
 
   // We've logged out; reset everything
@@ -180,13 +180,18 @@ var App = React.createClass({
     })
   },
 
-  transactionSucceeded: function() {
-    this.setState({
-      createTransactionDialogOpen: false
+  createTransaction: function(transaction) {
+    this._awsHandler.createTransaction(transaction, function() {
+      this.setState({
+        createTransactionDialogOpen: false
+      });
+    }, function() {
+      console.log("There was a problem creating the transaction. We need error handling here.");
     });
   },
 
   transactionCancelled: function() {
+
     this.setState({
       createTransactionDialogOpen: false
     });

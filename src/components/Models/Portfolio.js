@@ -1,4 +1,4 @@
-import Markit from '../Apis/QuoteService'
+import QuoteService from '../Apis/QuoteService'
 import ReactDOM from 'react-dom'
 
 var numeral = require('numeral');
@@ -60,8 +60,9 @@ class Portfolio {
     var promises = [];
 
     for (var stock of this.holdings) {
-      var quoteService = new Markit.QuoteService(stock);
-      quoteService.requestPromise.then(function(data) {
+      var quoteService = new QuoteService();
+      var quotePromise = quoteService.getQuote(stock);
+      quotePromise.then(function(data) {
         stock = data.stock;
         stock.price = data.LastPrice;
         stock.priceString = numeral(stock.price).format('$0,0.00');
@@ -69,11 +70,11 @@ class Portfolio {
         stock.holdingChangeObj = that.holdingChangeObj(data.Change, stock.shares);
         stock.previousOpen = data.Open;
       });
-      promises.push(quoteService.requestPromise);
+      promises.push(quotePromise);
     }
 
     Promise.all(promises).then(function() {
-      console.log("All requests finished!");
+      console.log("All quote requests finished!");
       that.totals = that.calculateTotals();
       callbackFunction();
     });
