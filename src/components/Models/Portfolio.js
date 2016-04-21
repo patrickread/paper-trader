@@ -28,28 +28,56 @@ class Portfolio {
     };
   }
 
+  addTransaction(transaction) {
+    this.transactions.push(transaction);
+    var holding = this.addTransactionToHoldings(transaction, this.holdings);
+    if (holding !== null) {
+      this.holdings.push(holding);
+    }
+
+    this.calculateTotals();
+  }
+
+  addTransactionToHoldings(transaction, holdings) {
+    var addingNewHolding = false;
+    var holding = this.findHolding(holdings, transaction.symbol);
+    if (holding === null) {
+      holding = {
+        key: holdings.length,
+        symbol: transaction.symbol,
+        name: transaction.name,
+        shares: 0,
+        costBasis: 0,
+        price: transaction.price,
+        priceString: numeral(transaction.price).format('$0,0.00'),
+        previousOpen: 0,
+        changePercentObj: {},
+        holdingChangeObj: {}
+      };
+      addingNewHolding = true;
+    }
+
+    if (transaction.type == "buy") {
+      holding.shares += transaction.shares;
+    } else {
+      // sell
+      holding.shares -= transaction.shares;
+    }
+
+    if (addingNewHolding) {
+      return holding;
+    } else {
+      return null;
+    }
+  }
+
   calculateHoldings() {
     var holdings = [];
     for (var transaction of this.transactions) {
-      var holding = this.findHolding(holdings, transaction.symbol);
-      if (holding === null) {
-        holding = {
-          key: holdings.length,
-          symbol: transaction.symbol,
-          name: transaction.name,
-          shares: 0,
-          costBasis: 0,
-          price: 0,
-          priceString: '',
-          previousOpen: 0,
-          changePercentObj: {},
-          holdingChangeObj: {}
-        };
+      var holding = this.addTransactionToHoldings(transaction, holdings);
+      if (holding !== null) {
         holdings.push(holding);
       }
-
-      holding.shares += transaction.shares;
-      holding.costBasis += (transaction.shares * transaction.price) + transaction.commission;
     }
 
     return holdings;

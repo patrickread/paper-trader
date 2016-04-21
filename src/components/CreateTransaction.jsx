@@ -12,7 +12,8 @@ var CreateTransaction = React.createClass({
         commission: this.props.commission,
         type: "buy"
       },
-      errors: {}
+      errors: {},
+      transactionInProgress: false
     }
   },
 
@@ -150,6 +151,12 @@ var CreateTransaction = React.createClass({
     var priceClasses = this.getPriceElementClassNames();
     var commissionClasses = this.getCommissionElementClassNames();
 
+    if (this.state.transactionInProgress) {
+      var confirmTransactionClasses = "disabled";
+    } else {
+      var confirmTransactionClasses = "";
+    }
+
     return <dialog className={classes} onClick={this.onClick}>
       <div>
         <h1>Make a trade</h1>
@@ -185,7 +192,7 @@ var CreateTransaction = React.createClass({
         </section>
         <section className="options">
           <button onClick={this.cancel}>Nevermind</button>
-          <button onClick={this.confirmTransaction}>Yep, Looks Good</button>
+          <button className={confirmTransactionClasses} onClick={this.confirmTransaction}>Yep, Looks Good</button>
         </section>
       </div>
     </dialog>
@@ -245,13 +252,30 @@ var CreateTransaction = React.createClass({
   },
 
   confirmTransaction: function(event) {
-    if (!this.hasErrors()) {
+    if (!this.hasErrors() && !this.state.transactionInProgress) {
+      this.setState({
+        transactionInProgress: true
+      });
+
       var transaction = this.state.transaction;
       var moment = require('moment');
       transaction.timestamp = moment().format("YYYY-MM-DDTHH:mm:ss");
     
-      this.props.needTransactionCreation(transaction);
+      this.props.needTransactionCreation(transaction, this.transactionCompleted);
     }
+  },
+
+  transactionCompleted: function() {
+    this.setState({
+      transactionInProgress: false,
+      transaction: {
+        shares: this.props.shares,
+        symbol: this.props.symbol,
+        price: this.props.price,
+        commission: this.props.commission,
+        type: "buy"
+      }
+    })
   },
 
   cancel: function(event) {

@@ -184,13 +184,21 @@ var App = React.createClass({
     })
   },
 
-  createTransaction: function(transaction) {
+  createTransaction: function(transaction, doneCallback) {
     var that = this;
     this._awsHandler.createTransaction(transaction, function() {
       that.setState({
         createTransactionDialogOpen: false
       });
       that.refreshTransactions();
+
+      var portfolio = that.state.portfolio;
+      portfolio.addTransaction(transaction);
+      that.setState({
+        portfolio: portfolio
+      });
+
+      doneCallback();
     }, function() {
       console.log("There was a problem creating the transaction. We need error handling here.");
     });
