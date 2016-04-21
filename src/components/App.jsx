@@ -31,11 +31,7 @@ var App = React.createClass({
   },
 
   componentWillMount: function () {
-    // Check for pre-saved AWS credentials
-    var awsCredentials = reactCookie.load('awsCredentials');
-    if (awsCredentials !== undefined) {
-      this.loadTransactionsFromAWS(awsCredentials);
-    }
+    this.refreshTransactions();
   },
 
   componentWillUnmount () {
@@ -93,6 +89,14 @@ var App = React.createClass({
       <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
       <CreateTransaction needTransactionCreation={this.createTransaction} cancel={this.transactionCancelled} {...newTransaction}></CreateTransaction>
     </div>
+  },
+
+  refreshTransactions: function() {
+    // Check for pre-saved AWS credentials
+    var awsCredentials = reactCookie.load('awsCredentials');
+    if (awsCredentials !== undefined) {
+      this.loadTransactionsFromAWS(awsCredentials);
+    }
   },
 
   trade: function(symbol, price) {
@@ -181,10 +185,12 @@ var App = React.createClass({
   },
 
   createTransaction: function(transaction) {
+    var that = this;
     this._awsHandler.createTransaction(transaction, function() {
-      this.setState({
+      that.setState({
         createTransactionDialogOpen: false
       });
+      that.refreshTransactions();
     }, function() {
       console.log("There was a problem creating the transaction. We need error handling here.");
     });

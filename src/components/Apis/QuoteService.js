@@ -20,6 +20,7 @@ class QuoteService {
         data.stock = stock;
         resolve(data);
       }).fail(function(jqXHR, textStatus, err) {
+        console.log(err);
         reject(Error(err));
       });
     });
@@ -39,6 +40,7 @@ class QuoteService {
       }).done(function(data) {
         resolve(data);
       }).fail(function(jqXHR, textStatus, err) {
+        console.log(err);
         reject(Error(err));
       });
     });
