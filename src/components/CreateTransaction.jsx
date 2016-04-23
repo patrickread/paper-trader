@@ -18,8 +18,8 @@ var CreateTransaction = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps) {
-    var transaction = newProps.transaction;
-    for (var attrname in this.state.transaction) { transaction[attrname] = this.state.transaction[attrname]; }
+    var transaction = this.state.transaction;
+    for (var attrname in newProps.transaction) { transaction[attrname] = newProps.transaction[attrname]; }
     
     this.setState({
       transaction: transaction

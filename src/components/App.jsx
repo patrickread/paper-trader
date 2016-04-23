@@ -3,11 +3,11 @@ import React from 'react'
 import Portfolio from './Models/Portfolio'
 import Header from './Shared/Header'
 import { Tabs, Tab } from 'react-mdl'
+import PortfolioTab from './PortfolioTab'
+import TransactionsTab from './TransactionsTab'
 import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
 import CreateTransaction from './CreateTransaction'
-import StockLine from './StockLine'
-import Total from './Total'
 import AWSHandler from './Apis/AWS/AWSHandler'
 
 import '../styles/app.less'
@@ -51,25 +51,16 @@ var App = React.createClass({
         appClassName += ' creating-transaction';
       }
 
-      if (this.state.portfolio.holdings.length > 0) {
-        for (var stock of this.state.portfolio.holdings) {
-          stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
-                          </StockLine>)
-        }
-      } else {
-        var blankStock = Portfolio.blankStock();
-        for (var i=0; i<3; i++) {
-          stockLines.push(<StockLine key={i} blankEntry={true} stock={blankStock}>
-                            </StockLine>)
-        }
+      if (this.state.activeTab == 0) {
+        var tabbedContent = <PortfolioTab portfolio={this.state.portfolio} />
+      } else if (this.state.activeTab == 1) {
+        var tabbedContent = <TransactionsTab />
       }
 
       var authedSection = 
         <div>
           <section className="content">
-            <Total cash={this.state.portfolio.cash} portfolio={this.state.portfolio}></Total>
-            <hr />
-            {stockLines}
+            {tabbedContent}
           </section>
           <AddButton onClick={this.openCreateTransactionDialog}>
           </AddButton>
@@ -83,7 +74,6 @@ var App = React.createClass({
       <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
         <Tab>Portfolio</Tab>
         <Tab>Transactions</Tab>
-        <Tab>Settings</Tab>
       </Tabs>
       {authedSection}
       <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
@@ -99,10 +89,11 @@ var App = React.createClass({
     }
   },
 
-  trade: function(symbol, price) {
+  trade: function(symbol, name, price) {
     this.setState({
       newTransaction: {
         symbol: symbol,
+        name: name,
         price: price
       },
       createTransactionDialogOpen: true

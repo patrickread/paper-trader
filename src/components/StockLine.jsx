@@ -20,7 +20,7 @@ var StockLine = React.createClass({
   },
 
   onTrade: function() {
-    this.props.onTrade(this.props.stock.symbol, this.props.stock.priceString);
+    this.props.onTrade(this.props.stock.symbol, this.props.stock.name, this.props.stock.priceString);
   },
 
   render: function () {
