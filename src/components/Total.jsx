@@ -46,7 +46,7 @@ var Total = React.createClass({
       }
     }
 
-    return <div style={this.props.style} className='stock-line total-line container'>
+    return <div style={this.props.style} className='content-line stock-line total-line container'>
       <div className="row">
         <div className="col-xs-6 col-sm-3">
           <h2>

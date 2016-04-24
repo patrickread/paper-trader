@@ -31,7 +31,7 @@ var StockLine = React.createClass({
       holdingChangeClassName += this.props.stock.holdingChangeObj.className;
     }
 
-    var topLineClasses = 'stock-line container';
+    var topLineClasses = 'content-line stock-line container';
 
     if (this.props.blankEntry) {
       topLineClasses += ' blank-entry';

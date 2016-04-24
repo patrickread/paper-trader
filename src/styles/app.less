@@ -467,18 +467,54 @@ html, body
       padding: 0px 20px;
     }
 
-    .stock-line
+    .content-line
     {
       width: auto;
       clear: both;
       margin: 32px 0px;
       background-color: rgba(0, 0, 0, 0.05);
-      height: 122px;
       overflow: hidden;
       padding: 9px 0px 0px 0px;
       font-family: 'Roboto', sans-serif;
       box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 2px 2px 0px rgba(0,0,0,0.24);
       border-radius: 3px;
+      font-size: 24px;
+      font-weight: 100;
+
+      &.stock-line
+      {
+        height: 122px;
+      }
+
+      &.transaction-line
+      {
+        height: 75px;
+      }
+
+      &.total-line
+      {
+        height: 80px;
+
+        h2
+        {
+          margin-top: 14px;
+        }
+
+        div.price
+        {
+          margin-top: 8px;
+        }
+
+        div.change-percent
+        {
+          margin-top: 8px;
+        }
+
+        div.holding-change
+        {
+          margin-top: -3px;
+        }
+      }
 
       &.blank-entry
       {
@@ -557,31 +593,6 @@ html, body
           padding: 12px 20px;
           cursor: pointer;
         }
-      }
-    }
-
-    .total-line
-    {
-      height: 80px;
-
-      h2
-      {
-        margin-top: 14px;
-      }
-
-      div.price
-      {
-        margin-top: 8px;
-      }
-
-      div.change-percent
-      {
-        margin-top: 8px;
-      }
-
-      div.holding-change
-      {
-        margin-top: -3px;
       }
     }
 

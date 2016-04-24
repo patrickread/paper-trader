@@ -1,4 +1,5 @@
 import React from 'react'
+import TransactionLine from './TransactionLine'
 
 var TransactionsTab = React.createClass({
   getInitialState: function () {
@@ -16,7 +17,15 @@ var TransactionsTab = React.createClass({
   },
 
   render: function () {
-    return <div><h1>Transactions!</h1></div>
+    var transactionLines = [];
+    
+    if (this.props.portfolio.transactions.length > 0) {
+      for (var transaction of this.props.portfolio.transactions) {
+        transactionLines.push(<TransactionLine key={transaction.id} transaction={transaction} />);
+      }
+    }
+
+    return <div>{transactionLines}</div>
   }
 })
 

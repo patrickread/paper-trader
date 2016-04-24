@@ -8,7 +8,7 @@ import TransactionsTab from './TransactionsTab'
 import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
 import CreateTransaction from './CreateTransaction'
-import AWSHandler from './Apis/AWS/AWSHandler'
+import ApiService from './Apis/ApiService'
 
 import '../styles/app.less'
 
@@ -43,8 +43,8 @@ var App = React.createClass({
 
     var appClassName = 'paper-trader-app';
 
-    var awsCredentials = reactCookie.load('awsCredentials');
-    if (awsCredentials !== undefined) {
+    var token = reactCookie.load('id_token');
+    if (token !== undefined) {
       if (this.state.loadingDialog.open) {
         appClassName += ' loading';
       } else if (this.state.createTransactionDialogOpen) {
@@ -54,7 +54,7 @@ var App = React.createClass({
       if (this.state.activeTab == 0) {
         var tabbedContent = <PortfolioTab portfolio={this.state.portfolio} />
       } else if (this.state.activeTab == 1) {
-        var tabbedContent = <TransactionsTab />
+        var tabbedContent = <TransactionsTab portfolio={this.state.portfolio} />
       }
 
       var authedSection = 
@@ -70,7 +70,7 @@ var App = React.createClass({
     var newTransaction = { transaction: this.state.newTransaction };
 
     return <div style={this.props.style} className={appClassName} onClick={this.appClicked}>
-      <Header loginStarted={this.loginStarted} loginCompleted={this.loadTransactionsFromAWS} logoutCompleted={this.resetUI}></Header>
+      <Header loginStarted={this.loginStarted} loginCompleted={this.loadTransactionsFromServer} logoutCompleted={this.resetUI}></Header>
       <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
         <Tab>Portfolio</Tab>
         <Tab>Transactions</Tab>
@@ -82,11 +82,7 @@ var App = React.createClass({
   },
 
   refreshTransactions: function() {
-    // Check for pre-saved AWS credentials
-    var awsCredentials = reactCookie.load('awsCredentials');
-    if (awsCredentials !== undefined) {
-      this.loadTransactionsFromAWS(awsCredentials);
-    }
+    this.loadTransactionsFromServer();
   },
 
   trade: function(symbol, name, price) {
@@ -109,7 +105,7 @@ var App = React.createClass({
     });
   },
 
-  loadTransactionsFromAWS: function(awsCredentials) {
+  loadTransactionsFromServer: function() {
     this.setState({
       loadingDialog: {
         open: true,
@@ -117,9 +113,10 @@ var App = React.createClass({
       }
     });
 
-    this._awsHandler = new AWSHandler(awsCredentials);
+    var token = reactCookie.load('id_token');
+    this._apiService = new ApiService(token);
 
-    this._awsHandler.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
+    this._apiService.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
   },
 
   // We've logged out; reset everything
@@ -177,7 +174,7 @@ var App = React.createClass({
 
   createTransaction: function(transaction, doneCallback) {
     var that = this;
-    this._awsHandler.createTransaction(transaction, function() {
+    this._apiService.createTransaction(transaction, function() {
       that.setState({
         createTransactionDialogOpen: false
       });

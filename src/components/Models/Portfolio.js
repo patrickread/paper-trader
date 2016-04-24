@@ -41,6 +41,8 @@ class Portfolio {
   addTransactionToHoldings(transaction, holdings) {
     var addingNewHolding = false;
     var holding = this.findHolding(holdings, transaction.symbol);
+    this.addTransactionViewProperties(transaction);
+
     if (holding === null) {
       holding = {
         key: holdings.length,
@@ -49,7 +51,7 @@ class Portfolio {
         shares: 0,
         costBasis: 0,
         price: transaction.price,
-        priceString: numeral(transaction.price).format('$0,0.00'),
+        priceString: transaction.priceString,
         previousOpen: 0,
         changePercentObj: {},
         holdingChangeObj: {}
@@ -69,6 +71,15 @@ class Portfolio {
     } else {
       return null;
     }
+  }
+
+  addTransactionViewProperties(transaction) {
+    var moment = require('moment');
+    transaction.timestampString = moment().format("MM/DD/YYYY");
+    transaction.priceString = numeral(transaction.price).format('$0,0.00');
+    transaction.commissionString = numeral(transaction.commission).format('$0,0.00');
+    transaction.total = (transaction.price * transaction.shares) + transaction.commission;
+    transaction.totalString = numeral(transaction.total).format('$0,0.00');
   }
 
   calculateHoldings() {
