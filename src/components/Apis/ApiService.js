@@ -1,7 +1,8 @@
 class ApiService {
   constructor(idToken) {
     this.idToken = idToken;
-    this.apiRoot = 'http://localhost:3000/';
+    //this.apiRoot = 'http://localhost:3000/';
+    this.apiRoot = 'http://paper-api.uproarlabs.com/';
   }
 
   getTransactions(getTransactionsSucceeded, getTransactionsFailed) {

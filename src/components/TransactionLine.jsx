@@ -25,7 +25,7 @@ var TransactionLine = React.createClass({
           <h1 className="symbol">{this.props.transaction.symbol}</h1>
         </div>
         <div className="hidden-xs col-sm-1">
-          <div className="loaded-text">{this.props.transaction.transaction_type}</div>
+          <div className="loaded-text transaction-type">{this.props.transaction.transaction_type}</div>
         </div>
         <div className="hidden-xs col-sm-2">
           <label className="loaded-label">Price</label>
@@ -43,7 +43,7 @@ var TransactionLine = React.createClass({
           <label className="loaded-label">Commission</label>
           <div className="loaded-text normal-text">{this.props.transaction.commissionString}</div>
         </div>
-        <div className="col-xs-6 col-sm-1">
+        <div className="col-xs-6 col-sm-2">
           <label className="right">Total</label>
           <div className="loaded-text total-text right">{this.props.transaction.totalString}</div>
         </div>

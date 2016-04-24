@@ -51,7 +51,7 @@ var App = React.createClass({
         appClassName += ' creating-transaction';
       }
 
-      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio});
+      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio, deleteTransaction: this.deleteTransaction});
 
       var authedSection = 
         <div>
@@ -116,17 +116,25 @@ var App = React.createClass({
   },
 
   deleteTransaction: function(transaction) {
-    var portfolio = this.state.portfolio;
-    for (var trans of portfolio.transactions) {
+    var transactions = this.state.portfolio.transactions;
+    for (var trans of transactions) {
       if (trans.id === transaction.id) {
-        portfolio.transactions.splice(trans, 1);
+        transactions.splice(trans, 1);
       }
     }
+    var portfolio = new Portfolio(transactions);
+
     this.setState({
       portfolio: portfolio
     });
 
-    this._apiService.deleteTransaction(transaction);
+    this._apiService.deleteTransaction(transaction, 
+      function() {
+
+      },
+      function() {
+
+      });
   },
 
   // We've logged out; reset everything
