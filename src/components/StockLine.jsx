@@ -52,7 +52,7 @@ var StockLine = React.createClass({
           <div className={changePercentClassName}>{this.props.stock.changePercentObj.string}</div>
         </div>
         <div className="col-xs-6 col-sm-3">
-          <label className="loaded-label holding-change-label">$ Change Today</label>
+          <label className="loaded-label right">$ Change Today</label>
           <h1 className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</h1>
         </div>
       </div>

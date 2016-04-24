@@ -54,7 +54,7 @@ var App = React.createClass({
       if (this.state.activeTab == 0) {
         var tabbedContent = <PortfolioTab portfolio={this.state.portfolio} />
       } else if (this.state.activeTab == 1) {
-        var tabbedContent = <TransactionsTab portfolio={this.state.portfolio} />
+        var tabbedContent = <TransactionsTab portfolio={this.state.portfolio} deleteTransaction={this.deleteTransaction} />
       }
 
       var authedSection = 
@@ -117,6 +117,20 @@ var App = React.createClass({
     this._apiService = new ApiService(token);
 
     this._apiService.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
+  },
+
+  deleteTransaction: function(transaction) {
+    var portfolio = this.state.portfolio;
+    for (var trans of portfolio.transactions) {
+      if (trans.id === transaction.id) {
+        portfolio.transactions.splice(trans, 1);
+      }
+    }
+    this.setState({
+      portfolio: portfolio
+    });
+
+    this._apiService.deleteTransaction(transaction);
   },
 
   // We've logged out; reset everything

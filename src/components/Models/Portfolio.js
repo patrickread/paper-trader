@@ -59,7 +59,7 @@ class Portfolio {
       addingNewHolding = true;
     }
 
-    if (transaction.type == "buy") {
+    if (transaction.transaction_type == "buy") {
       holding.shares += transaction.shares;
     } else {
       // sell

@@ -10,7 +10,7 @@ var CreateTransaction = React.createClass({
         symbol: this.props.symbol,
         price: this.props.price,
         commission: this.props.commission,
-        type: "buy"
+        transaction_type: "buy"
       },
       errors: {},
       transactionInProgress: false
@@ -163,8 +163,8 @@ var CreateTransaction = React.createClass({
         <section className="body">
           <div>
             <div className="text">I would like to </div>
-            <Select name="type" className="select-box type" placeholder="Select" 
-              value={this.state.transaction.type} onChange={this.handleChange}>
+            <Select name="transaction_type" className="select-box type" placeholder="Select" 
+              value={this.state.transaction.transaction_type} onChange={this.handleChange}>
               <Option value="buy">buy</Option>
               <Option value="sell">sell</Option>
             </Select>
@@ -273,7 +273,7 @@ var CreateTransaction = React.createClass({
         symbol: this.props.symbol,
         price: this.props.price,
         commission: this.props.commission,
-        type: "buy"
+        transaction_type: "buy"
       }
     })
   },
