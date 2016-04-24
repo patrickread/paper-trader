@@ -164,27 +164,47 @@ html, body
     }
   }
 
-  .mdl-tabs
+  ul.tabs
   {
     background-color: #3E50B4;
+    list-style: none;
+    width: 100%;
+    height: 49px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
 
-    .mdl-tabs__tab
+    li.tab
     {
-      color: #fff;
-      width: 100%;
+      flex: 1;
+      text-align: center;
 
-      &:hover
+      a
       {
-        text-decoration: none;
-      }
-
-      &.is-active
-      {
+        display: block;
         color: #fff;
-        &:after
+        font-size: 14px;
+        text-transform: uppercase;
+        width: 100%;
+        height: 100%;
+        padding-top: 13px;
+
+        &:hover
         {
-          height: 5px;
-          background-color: #FFFF8C;
+          text-decoration: none;
+        }
+
+        &:focus
+        {
+          text-decoration: none;
+          outline: none;
+        }
+
+        &.active
+        {
+          border-bottom: 5px solid #FFFF8C;
         }
       }
     }

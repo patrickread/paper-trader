@@ -1,8 +1,8 @@
 import React from 'react'
-
 import Portfolio from './Models/Portfolio'
 import Header from './Shared/Header'
-import { Tabs, Tab } from 'react-mdl'
+import Tabs from './Shared/Tabs'
+import Tab from './Shared/Tab'
 import PortfolioTab from './PortfolioTab'
 import TransactionsTab from './TransactionsTab'
 import AddButton from './Shared/AddButton'
@@ -22,7 +22,7 @@ var App = React.createClass({
       },
       activeTab: 0,
       transactions: [ ],
-      portfolio: { holdings: [], cash: null },
+      portfolio: { holdings: [], cash: null, transactions: [] },
       createTransactionDialogOpen: false,
       newTransaction: {
 
@@ -51,11 +51,7 @@ var App = React.createClass({
         appClassName += ' creating-transaction';
       }
 
-      if (this.state.activeTab == 0) {
-        var tabbedContent = <PortfolioTab portfolio={this.state.portfolio} />
-      } else if (this.state.activeTab == 1) {
-        var tabbedContent = <TransactionsTab portfolio={this.state.portfolio} deleteTransaction={this.deleteTransaction} />
-      }
+      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio});
 
       var authedSection = 
         <div>
@@ -71,9 +67,9 @@ var App = React.createClass({
 
     return <div style={this.props.style} className={appClassName} onClick={this.appClicked}>
       <Header loginStarted={this.loginStarted} loginCompleted={this.loadTransactionsFromServer} logoutCompleted={this.resetUI}></Header>
-      <Tabs activeTab={this.state.activeTab} onChange={(tabId) => this.setState({ activeTab: tabId })} ripple>
-        <Tab>Portfolio</Tab>
-        <Tab>Transactions</Tab>
+      <Tabs>
+        <Tab to="/portfolio">Portfolio</Tab>
+        <Tab to="/transactions">Transactions</Tab>
       </Tabs>
       {authedSection}
       <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
