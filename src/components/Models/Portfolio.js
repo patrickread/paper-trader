@@ -75,6 +75,11 @@ class Portfolio {
 
   addTransactionViewProperties(transaction) {
     var moment = require('moment');
+
+    if (transaction.name.length > 15) {
+      transaction.name = transaction.name.substring(0, 15).trim() + "...";
+    }
+
     transaction.timestampString = moment().format("MM/DD/YYYY");
     transaction.priceString = numeral(transaction.price).format('$0,0.00');
     transaction.commissionString = numeral(transaction.commission).format('$0,0.00');

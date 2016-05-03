@@ -52,6 +52,29 @@ class ApiService {
     });
   }
 
+  // returns a promise
+  getQuote(symbol) {
+    var that = this;
+    var headers = this.getDefaultHeaders();
+
+    return new Promise(function(resolve, reject) {
+      var quoteUrl = that.apiRoot + "quotes/" + symbol;
+      var params = {
+        method: 'GET',
+        headers: headers
+      }
+
+      fetch(quoteUrl, params)
+      .then(function(response) {
+        response.json().then(function(json) {
+          resolve(json);
+        });
+      }).catch(function(err) {
+        reject(Error(err));
+      });
+    });
+  }
+
   getDefaultHeaders() {
     return {
       authorization: 'Bearer ' + this.idToken,

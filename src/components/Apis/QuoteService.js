@@ -1,5 +1,8 @@
+import ApiService from '../Apis/ApiService'
+import reactCookie from 'react-cookie'
+
 class QuoteService {
-  constructor(stock) {
+  constructor() {
     this.ROOT_URL = "http://dev.markitondemand.com/Api/v2/";
     this.QUOTE_URL = this.ROOT_URL + "Quote/jsonp";
     this.LOOKUP_URL = this.ROOT_URL + "Lookup/jsonp";
@@ -17,8 +20,26 @@ class QuoteService {
         dataType: "jsonp",
         context: that
       }).done(function(data) {
-        data.stock = stock;
-        resolve(data);
+        if (data.Status.indexOf("APP_SPECIFIC_ERROR") !== -1) {
+          var token = reactCookie.load('id_token');
+          var apiService = new ApiService(token);
+          apiService.getQuote(stock.symbol).then(function(data) {
+            var lastPrice = parseFloat(data.price);
+            var changePercent = parseFloat(data.change_percent.replace('+', '').replace('%', ''));
+            var change = parseFloat(data.change_numeric.replace('+', ''));
+
+            resolve({
+              stock: stock,
+              LastPrice: lastPrice,
+              ChangePercent: changePercent,
+              Change: change,
+              Open: data.open
+            });
+          });
+        } else {
+          data.stock = stock;
+          resolve(data);
+        }
       }).fail(function(jqXHR, textStatus, err) {
         console.log(err);
         reject(Error(err));
