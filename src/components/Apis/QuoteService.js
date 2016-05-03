@@ -24,9 +24,9 @@ class QuoteService {
           var token = reactCookie.load('id_token');
           var apiService = new ApiService(token);
           apiService.getQuote(stock.symbol).then(function(data) {
-            var lastPrice = parseFloat(data.price);
-            var changePercent = parseFloat(data.change_percent.replace('+', '').replace('%', ''));
-            var change = parseFloat(data.change_numeric.replace('+', ''));
+            var lastPrice = data.price;
+            var changePercent = data.change_percent;
+            var change = data.change_numeric;
 
             resolve({
               stock: stock,
