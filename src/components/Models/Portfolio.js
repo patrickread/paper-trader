@@ -1,4 +1,5 @@
 import QuoteService from '../Apis/QuoteService'
+import PusherService from '../Apis/PusherService'
 import ReactDOM from 'react-dom'
 
 var numeral = require('numeral');
@@ -99,28 +100,60 @@ class Portfolio {
     return holdings;
   }
 
+  symbolUpdatedAndUpdateUI(data, caller) {
+    caller.symbolUpdated({
+      data: data,
+      caller: caller
+    });
+
+    caller.totals = caller.calculateTotals();
+    caller.refreshUI(caller);
+  }
+
+  symbolUpdated(options={}) {
+    var data = options.data;
+    var that = options.caller;
+
+    var stock = that.findStockForSymbol(data.symbol);
+    
+    if (stock) {
+      stock.price = data.price;
+      stock.priceString = numeral(stock.price).format('$0,0.00');
+      stock.changePercentObj = that.changePercentObj(data.change_percent);
+      stock.holdingChangeObj = that.holdingChangeObj(data.change_numeric, stock.shares);
+      stock.previousOpen = data.open;
+    }
+  }
+
+  findStockForSymbol(symbol) {
+    for (var holding of this.holdings) {
+      if (holding.symbol === symbol) {
+        return holding;
+      }
+    }
+
+    return null;
+  }
+
   updateHoldingsFromAPI(callbackFunction) {
     var that = this;
     var promises = [];
+    that.refreshUI = callbackFunction;
+
+    var pusherService = new PusherService();
+    var quoteService = new QuoteService();
 
     for (var stock of this.holdings) {
-      var quoteService = new QuoteService();
-      var quotePromise = quoteService.getQuote(stock);
-      quotePromise.then(function(data) {
-        stock = data.stock;
-        stock.price = data.LastPrice;
-        stock.priceString = numeral(stock.price).format('$0,0.00');
-        stock.changePercentObj = that.changePercentObj(data.ChangePercent);
-        stock.holdingChangeObj = that.holdingChangeObj(data.Change, stock.shares);
-        stock.previousOpen = data.Open;
-      });
+      var quotePromise = quoteService.getQuote(stock, that);
+      quotePromise.then(this.symbolUpdated);
+      pusherService.subscribeForSymbol(stock.symbol, that, this.symbolUpdatedAndUpdateUI);
       promises.push(quotePromise);
     }
 
     Promise.all(promises).then(function() {
       console.log("All quote requests finished!");
       that.totals = that.calculateTotals();
-      callbackFunction();
+      callbackFunction(that);
     });
   }
 

@@ -169,16 +169,18 @@ var App = React.createClass({
       portfolio: portfolio
     });
 
-    portfolio.updateHoldingsFromAPI(function() {
-      // refresh portfolio with new data
-      that.setState({
-        loadingDialog: {
-          open: false,
-          message: ""
-        },
-        portfolio: portfolio
-      })
-    });
+    portfolio.updateHoldingsFromAPI(this.holdingsUpdated);
+  },
+
+  holdingsUpdated: function(portfolio) {
+    // refresh portfolio with new data
+    this.setState({
+      loadingDialog: {
+        open: false,
+        message: ""
+      },
+      portfolio: portfolio
+    })
   },
 
   openCreateTransactionDialog: function() {

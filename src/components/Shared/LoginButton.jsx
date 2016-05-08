@@ -30,12 +30,11 @@ var LoginButton = React.createClass({
     });
   },
 
-  loginCompleted: function(profile, credentials) {
+  loginCompleted: function(profile) {
     this.setState({ profile: profile });
-    this.setState({ awsCredentials: credentials });
 
     if (this.props.loginCompleted !== undefined) {
-      this.props.loginCompleted(credentials);
+      this.props.loginCompleted();
     }
   },
 

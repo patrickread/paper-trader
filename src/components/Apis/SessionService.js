@@ -33,7 +33,7 @@ class SessionService {
         reactCookie.save('profile', profile, { expires: new Date(Date.now() + 86400000) });
         reactCookie.save('id_token', id_token, { expires: new Date(Date.now() + 86400000) });
 
-        that.getDelegationToken(profile, id_token, successCallback);
+        successCallback(profile);
       }
 
       // User is logged in
