@@ -8,6 +8,7 @@ import TransactionsTab from './TransactionsTab'
 import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
 import CreateTransaction from './CreateTransaction'
+import CreateCashTransaction from './CreateCashTransaction'
 import ApiService from './Apis/ApiService'
 
 import '../styles/app.less'
@@ -23,7 +24,7 @@ var App = React.createClass({
       activeTab: 0,
       transactions: [ ],
       portfolio: { holdings: [], cash: null, transactions: [] },
-      createTransactionDialogOpen: false,
+      dialogOpened: null,
       newTransaction: {
 
       }
@@ -47,11 +48,11 @@ var App = React.createClass({
     if (token !== undefined) {
       if (this.state.loadingDialog.open) {
         appClassName += ' loading';
-      } else if (this.state.createTransactionDialogOpen) {
-        appClassName += ' creating-transaction';
+      } else if (this.state.dialogOpened) {
+        appClassName += ' ' + this.state.dialogOpened;
       }
 
-      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio, deleteTransaction: this.deleteTransaction});
+      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio, deleteTransaction: this.deleteTransaction, openCreateCashTransaction: this.openCreateCashTransactionDialog});
 
       var authedSection = 
         <div>
@@ -74,6 +75,7 @@ var App = React.createClass({
       {authedSection}
       <LoadingDialog message={this.state.loadingDialog.message} error={this.state.loadingDialog.error}></LoadingDialog>
       <CreateTransaction needTransactionCreation={this.createTransaction} cancel={this.transactionCancelled} {...newTransaction}></CreateTransaction>
+      <CreateCashTransaction needTransactionCreation={this.createCashTransaction} cancel={this.transactionCancelled} />
     </div>
   },
 
@@ -88,7 +90,7 @@ var App = React.createClass({
         name: name,
         price: price
       },
-      createTransactionDialogOpen: true
+      dialogOpened: 'creating-transaction'
     });
   },
 
@@ -113,6 +115,20 @@ var App = React.createClass({
     this._apiService = new ApiService(token);
 
     this._apiService.getTransactions(this.transactionsLoaded, this.transactionsFailedToLoad);
+  },
+
+  loadCashTransactionsFromServer: function() {
+    this.setState({
+      loadingDialog: {
+        open: true,
+        message: "Checking out cash positions…"
+      }
+    });
+
+    var token = reactCookie.load('id_token');
+    this._apiService = new ApiService(token);
+
+    this._apiService.getCashTransactions(this.cashTransactionsLoaded, this.cashTransactionsFailedToLoad);
   },
 
   deleteTransaction: function(transaction) {
@@ -153,6 +169,27 @@ var App = React.createClass({
     this.loadPortfolioFromTransactions();
   },
 
+  cashTransactionsLoaded: function(cash_transactions) {
+    var portfolio = this.state.portfolio;
+    portfolio.calculateCashTotals();
+
+    this.setState({
+      loadingDialog: {
+        open: false,
+        message: ""
+      },
+      portfolio: portfolio
+    });
+  },
+
+  cashTransactionsFailedToLoad: function(response) {
+    this.setState({ loadingDialog: {
+      open: true,
+      error: true,
+      message: "Uh Oh! It seems there was a problem loading your portfolio. Please logout and log back in and see if that helps."
+    }});
+  },
+
   transactionsFailedToLoad: function(response) {
     this.setState({ loadingDialog: {
       open: true,
@@ -173,14 +210,8 @@ var App = React.createClass({
   },
 
   holdingsUpdated: function(portfolio) {
-    // refresh portfolio with new data
-    this.setState({
-      loadingDialog: {
-        open: false,
-        message: ""
-      },
-      portfolio: portfolio
-    })
+    this.setState({portfolio: portfolio});
+    this.loadCashTransactionsFromServer();
   },
 
   openCreateTransactionDialog: function() {
@@ -188,15 +219,44 @@ var App = React.createClass({
       newTransaction: {
         symbol: null
       },
-      createTransactionDialogOpen: true
+      dialogOpened: 'creating-transaction'
     })
+  },
+
+  openCreateCashTransactionDialog: function() {
+    this.setState({
+      newTransaction: {
+        symbol: null
+      },
+      dialogOpened: 'creating-cash-transaction'
+    })
+  },
+
+  createCashTransaction: function(transaction, doneCallback) {
+    var that = this;
+    this._apiService.createCashTransaction(transaction, function() {
+      that.setState({
+        dialogOpened: null
+      });
+      that.loadCashTransactionsFromServer();
+
+      var portfolio = that.state.portfolio;
+      portfolio.addCashTransaction(transaction);
+      that.setState({
+        portfolio: portfolio
+      });
+
+      doneCallback();
+    }, function() {
+      console.log("There was a problem updating cash. We need error handling here.");
+    });
   },
 
   createTransaction: function(transaction, doneCallback) {
     var that = this;
     this._apiService.createTransaction(transaction, function() {
       that.setState({
-        createTransactionDialogOpen: false
+        dialogOpened: null
       });
       that.refreshTransactions();
 
@@ -213,16 +273,15 @@ var App = React.createClass({
   },
 
   transactionCancelled: function() {
-
     this.setState({
-      createTransactionDialogOpen: false
+      dialogOpened: null
     });
   },
 
   appClicked: function(event) {
-    if (this.state.createTransactionDialogOpen) {
+    if (this.state.dialogOpened) {
       this.setState({
-        createTransactionDialogOpen: false
+        dialogOpened: null
       });
       event.stopPropagation();
     }

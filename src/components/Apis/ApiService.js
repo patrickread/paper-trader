@@ -21,6 +21,22 @@ class ApiService {
     });
   }
 
+  getCashTransactions(getCashTransactionsSucceeded, getCashTransactionsFailed) {
+    var headers = this.getDefaultHeaders();
+
+    var params = { method: 'GET',
+                   headers: headers };
+
+    fetch(this.apiRoot + 'cash_transactions', params)
+    .then(function(response) {
+        response.json().then(function(json) {
+          getCashTransactionsSucceeded(json);
+        });
+    }).catch(function(err) {
+      getCashTransactionsFailed(err);
+    });
+  }
+
   createTransaction(transaction, createSucceeded, createFailed) {
     var headers = this.getDefaultHeaders();
 
@@ -29,6 +45,23 @@ class ApiService {
                    body: JSON.stringify({ transaction: transaction }) };
 
     fetch(this.apiRoot + 'transactions', params)
+    .then(function(response) {
+      response.json().then(function(json) {
+        createSucceeded(json);
+      });
+    }).catch(function(err) {
+      createFailed(err);
+    });
+  }
+
+  createCashTransaction(transaction, createSucceeded, createFailed) {
+    var headers = this.getDefaultHeaders();
+
+    var params = { method: 'POST',
+                   headers: headers,
+                   body: JSON.stringify({ cash_transaction: transaction }) };
+
+    fetch(this.apiRoot + 'cash_transactions', params)
     .then(function(response) {
       response.json().then(function(json) {
         createSucceeded(json);

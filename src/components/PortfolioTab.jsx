@@ -18,6 +18,10 @@ var PortfolioTab = React.createClass({
     
   },
 
+  openCreateCashTransaction: function() {
+    this.props.openCreateCashTransaction();
+  },
+
   render: function () {
     var stockLines = []
 
@@ -35,7 +39,7 @@ var PortfolioTab = React.createClass({
     }
 
     return <div>
-      <Total cash={this.props.portfolio.cash} portfolio={this.props.portfolio}></Total>
+      <Total cash={this.props.portfolio.cash} portfolio={this.props.portfolio} openCreateCashTransaction={this.openCreateCashTransaction}></Total>
       <hr />
       {stockLines}
       </div>;

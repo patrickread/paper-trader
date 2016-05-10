@@ -8,6 +8,7 @@ class Portfolio {
   constructor(transactions) {
     this.transactions = transactions;
     this.holdings = this.calculateHoldings();
+    this.cashTransactions = [];
     this.cash = 1034.56;
   }
 
@@ -37,6 +38,11 @@ class Portfolio {
     }
 
     this.calculateTotals();
+  }
+
+  addCashTransaction(cashTransaction) {
+    this.cashTransactions.push(cashTransaction);
+    this.calculateCashTotals();
   }
 
   addTransactionToHoldings(transaction, holdings) {
@@ -77,7 +83,7 @@ class Portfolio {
   addTransactionViewProperties(transaction) {
     var moment = require('moment');
 
-    if (transaction.name.length > 15) {
+    if (transaction.name && transaction.name.length > 15) {
       transaction.name = transaction.name.substring(0, 15).trim() + "...";
     }
 
@@ -144,10 +150,12 @@ class Portfolio {
     var quoteService = new QuoteService();
 
     for (var stock of this.holdings) {
-      var quotePromise = quoteService.getQuote(stock, that);
-      quotePromise.then(this.symbolUpdated);
-      pusherService.subscribeForSymbol(stock.symbol, that, this.symbolUpdatedAndUpdateUI);
-      promises.push(quotePromise);
+      if (!!stock.symbol) {
+        var quotePromise = quoteService.getQuote(stock, that);
+        quotePromise.then(this.symbolUpdated);
+        pusherService.subscribeForSymbol(stock.symbol, that, this.symbolUpdatedAndUpdateUI);
+        promises.push(quotePromise);
+      }
     }
 
     Promise.all(promises).then(function() {
@@ -169,6 +177,19 @@ class Portfolio {
       dollarChangeToday: totalChanges,
       percentChangeToday: totalChanges / startValue
     }
+  }
+
+  calculateCashTotals() {
+    var cash = 0;
+    for (var cashTransaction of this.cashTransactions) {
+      if (cashTransaction.transaction_type.toLowerCase() === 'deposit') {
+        cash += cashTransaction.amount;
+      } else {
+        cash -= cashTransaction.amount;
+      }
+    }
+
+    this.cash = cash;
   }
 
   findHolding(holdings, symbol) {

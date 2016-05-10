@@ -288,6 +288,11 @@ html, body
         {
           display: none;
         }
+
+        div.edit-icon
+        {
+          display: none;
+        }
       }
 
       .toolbar
@@ -353,129 +358,162 @@ html, body
     {
       display: block;
 
-      section.body
+      input[type="text"],input[type="number"]
       {
-        >div
+        &#shares
         {
-          margin-bottom: 16px;
-          clear: both;
+          width: 35px;
         }
 
-        div.text
+        &#symbol
         {
-          display: inline-block;
+          width: 55px;
         }
 
-        input[type="text"],input[type="number"]
+        &#price
         {
-          display: inline-block;
-          background: none;
-          border: none;
-          border-bottom: 1px solid #979797;
-          width: auto;
-          outline: none;
-          margin: 0px 5px;
-
-          &#shares
-          {
-            width: 35px;
-          }
-
-          &#symbol
-          {
-            width: 55px;
-          }
-
-          &#price
-          {
-            width: 60px;
-          }
-
-          &#commission
-          {
-            width: 50px;
-          }
-
-          &.error
-          {
-            border-bottom: 1px solid #F44336;
-          }
+          width: 60px;
         }
 
-        .select-box
+        &#commission
         {
-          color: rgba(0, 0, 0, 0.54);
-          font-size: 18px;
-          display: inline-block;
-          margin: 0px 5px;
-          padding-bottom: 2px;
-          vertical-align: bottom;
+          width: 50px;
+        }
+      }
 
-          color: rgba(0, 0, 0, 0.54);
-          outline: none;
-          background-color: transparent;
-          border-top: none;
-          border-left: none;
-          border-right: none;
-          border-radius: 0px;
-          border-bottom: 1px solid #979797;
-          position: relative;
-          cursor: pointer;
+      .select-box
+      {
+        &.transaction-type
+        {
+          width: 50px;
+        }
+      }
+    }
+  }
 
-          .selected-element-inner
+  &.creating-cash-transaction
+  {
+    dialog.create-cash-transaction
+    {
+      display: block;
+
+      input[type="text"],input[type="number"]
+      {
+        &#amount
+        {
+          width: 100px;
+        }
+      }
+
+      .select-box
+      {
+        &.transaction-type
+        {
+          width: 90px;
+        }
+      }
+    }
+  }
+
+  dialog.create
+  {
+    section.body
+    {
+      >div
+      {
+        margin-bottom: 16px;
+        clear: both;
+      }
+
+      div.text
+      {
+        display: inline-block;
+      }
+
+      input[type="text"],input[type="number"]
+      {
+        display: inline-block;
+        background: none;
+        border: none;
+        border-bottom: 1px solid #979797;
+        width: auto;
+        outline: none;
+        margin: 0px 5px;
+
+        &.error
+        {
+          border-bottom: 1px solid #F44336;
+        }
+      }
+
+      .select-box
+      {
+        color: rgba(0, 0, 0, 0.54);
+        font-size: 18px;
+        display: inline-block;
+        margin: 0px 5px;
+        padding-bottom: 2px;
+        vertical-align: bottom;
+
+        color: rgba(0, 0, 0, 0.54);
+        outline: none;
+        background-color: transparent;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0px;
+        border-bottom: 1px solid #979797;
+        position: relative;
+        cursor: pointer;
+
+        .selected-element-inner
+        {
+          float: left;
+        }
+
+        .arrow-box
+        {
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 8px 6px 0 6px;
+          border-color: #979797 transparent transparent transparent;
+          position: absolute;
+          right: 0px;
+          top: 50%;
+          margin-top: -4px;
+        }
+
+        .options
+        {
+          display: none;
+          position: absolute;
+          z-index: 9999;
+          margin-top: 30px;
+          background-color: #fafafa;
+          border: 1px solid #979797;
+          border-radius: 2px;
+          padding: 0px 0px;
+          box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.12), 0px 1px 1px 0px rgba(0,0,0,0.24);
+
+          &.active
           {
-            float: left;
+            display: block;
           }
 
-          .arrow-box
+          .option
           {
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 8px 6px 0 6px;
-            border-color: #979797 transparent transparent transparent;
-            position: absolute;
-            right: 0px;
-            top: 50%;
-            margin-top: -4px;
-          }
+            padding: 4px 10px;
+            border-bottom: 1px solid #CCCCCC;
 
-          &.type
-          {
-            width: 50px;
-          }
-
-          .options
-          {
-            display: none;
-            position: absolute;
-            z-index: 9999;
-            margin-top: 30px;
-            background-color: #fafafa;
-            border: 1px solid #979797;
-            border-radius: 2px;
-            padding: 0px 0px;
-            box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.12), 0px 1px 1px 0px rgba(0,0,0,0.24);
-
-            &.active
+            &.selected
             {
-              display: block;
+              font-weight: 600;
             }
 
-            .option
+            &:hover
             {
-              padding: 4px 10px;
-              border-bottom: 1px solid #CCCCCC;
-
-              &.selected
-              {
-                font-weight: 600;
-              }
-
-              &:hover
-              {
-                background-color: #eeeeee;
-              }
+              background-color: #eeeeee;
             }
           }
         }
@@ -570,6 +608,20 @@ html, body
         div.holding-change
         {
           margin-top: -3px;
+        }
+
+        div.edit-icon
+        {
+          width: 32px;
+          height: 32px;
+          padding: 8px;
+          float: left;
+          cursor: pointer;
+
+          img
+          {
+            width: 100%;
+          }
         }
       }
 
@@ -723,6 +775,11 @@ html, body
   }
 
   .create-transaction
+  {
+    display: none;
+  }
+
+  .create-cash-transaction
   {
     display: none;
   }

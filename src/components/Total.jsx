@@ -1,4 +1,5 @@
 import React from 'react'
+import EditIcon from './images/edit_icon@2x.png';
 
 var numeral = require('numeral');
 
@@ -9,6 +10,10 @@ var Total = React.createClass({
 
   componentWillUnmount () {
     
+  },
+
+  editCash: function() {
+    this.props.openCreateCashTransaction();
   },
 
   render: function () {
@@ -53,11 +58,12 @@ var Total = React.createClass({
             Summary
           </h2>
         </div>
-        <div className="hidden-xs col-sm-1">
+        <div className="hidden-xs col-sm-2">
           <label className="loaded-label">Cash</label>
           <div className="loaded-text price">{numeral(this.props.cash).format('$0,0.00')}</div>
+          <div className="edit-icon" onClick={this.editCash}><img src={EditIcon} /></div>
         </div>
-        <div className="hidden-xs col-sm-3 col-sm-offset-2">
+        <div className="hidden-xs col-sm-3 col-sm-offset-1">
           <label className="loaded-label">% Change Today</label>
           <div className={changePercentClassName}>{percentChangeTodayString}</div>
         </div>
