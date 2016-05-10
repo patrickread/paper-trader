@@ -58,8 +58,12 @@ var CreateTransaction = React.createClass({
     this.setState({ transaction: transaction});
   },
 
-  validateShares: function(shares) {
-    var sharesInt = parseInt(shares);
+  validateShares: function(value) {
+    if (value === undefined) {
+      value = this.state.transaction.shares || '';
+    }
+
+    var sharesInt = parseInt(value);
     var errorMessage = "";
     if (isNaN(sharesInt)) {
       errorMessage = "Shares should be a number.";
@@ -76,8 +80,12 @@ var CreateTransaction = React.createClass({
     });
   },
 
-  validatePrice: function(price) {
-    var priceFloat = parseFloat(price);
+  validatePrice: function(value) {
+    if (value === undefined) {
+      value = this.state.transaction.price || '';
+    }
+
+    var priceFloat = parseFloat(value);
     var errorMessage = "";
     if (isNaN(priceFloat)) {
       errorMessage = "Price should be a number.";
@@ -94,8 +102,12 @@ var CreateTransaction = React.createClass({
     });
   },
 
-  validateCommission: function(commission) {
-    var commissionFloat = parseFloat(commission);
+  validateCommission: function(value) {
+    if (value === undefined) {
+      value = this.state.transaction.price || '';
+    }
+
+    var commissionFloat = parseFloat(value);
     var errorMessage = "";
     if (isNaN(commissionFloat)) {
       errorMessage = "Commission should be a number.";
@@ -110,6 +122,29 @@ var CreateTransaction = React.createClass({
     this.setState({
       errors: errors
     });
+  },
+
+  // Just check that there's a symbol at all, handleBlur will validate against
+  // a set of valid symbols.
+  validateSymbol: function() {
+    var errorMessage = "";
+    
+    if (this.state.transaction.symbol === null || this.state.transaction.symbol === "") {
+      errorMessage = "Symbol must be filled out.";
+    }
+
+    var errors = this.state.errors;
+    errors.symbol = errorMessage;
+    this.setState({
+      errors: errors
+    });
+  },
+
+  validateAll: function() {
+    this.validateShares();
+    this.validatePrice();
+    this.validateCommission();
+    this.validateSymbol();
   },
 
   handleBlur: function(event) {
@@ -144,7 +179,7 @@ var CreateTransaction = React.createClass({
   },
 
   render: function () {
-    var classes = "create-transaction";
+    var classes = "create-transaction create";
 
     var shareClasses = this.getShareElementClassNames();
     var symbolClasses = this.getSymbolElementClassNames();
@@ -163,7 +198,7 @@ var CreateTransaction = React.createClass({
         <section className="body">
           <div>
             <div className="text">I would like to </div>
-            <Select name="transaction_type" className="select-box type" placeholder="Select" 
+            <Select id="transaction_type" name="transaction_type" className="select-box transaction-type" placeholder="Select" 
               value={this.state.transaction.transaction_type} onChange={this.handleChange}>
               <Option value="buy">buy</Option>
               <Option value="sell">sell</Option>
@@ -252,6 +287,7 @@ var CreateTransaction = React.createClass({
   },
 
   confirmTransaction: function(event) {
+    this.validateAll();
     if (!this.hasErrors() && !this.state.transactionInProgress) {
       this.setState({
         transactionInProgress: true
