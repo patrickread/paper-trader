@@ -171,6 +171,7 @@ var App = React.createClass({
 
   cashTransactionsLoaded: function(cash_transactions) {
     var portfolio = this.state.portfolio;
+    portfolio.cashTransactions = cash_transactions;
     portfolio.calculateCashTotals();
 
     this.setState({

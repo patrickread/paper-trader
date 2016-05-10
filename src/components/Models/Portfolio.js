@@ -1,12 +1,14 @@
 import QuoteService from '../Apis/QuoteService'
 import PusherService from '../Apis/PusherService'
 import ReactDOM from 'react-dom'
+import Transaction from '../Models/Transaction'
+import _ from "underscore";
 
 var numeral = require('numeral');
 
 class Portfolio {
   constructor(transactions) {
-    this.transactions = transactions;
+    this.transactions = _.map(transactions, function(transaction) { return new Transaction(transaction); });
     this.holdings = this.calculateHoldings();
     this.cashTransactions = [];
     this.cash = 1034.56;
@@ -31,8 +33,9 @@ class Portfolio {
   }
 
   addTransaction(transaction) {
-    this.transactions.push(transaction);
-    var holding = this.addTransactionToHoldings(transaction, this.holdings);
+    var transactionModel = new Transaction(transaction);
+    this.transactions.push(transactionModel);
+    var holding = this.addTransactionToHoldings(transactionModel, this.holdings);
     if (holding !== null) {
       this.holdings.push(holding);
     }
@@ -48,7 +51,8 @@ class Portfolio {
   addTransactionToHoldings(transaction, holdings) {
     var addingNewHolding = false;
     var holding = this.findHolding(holdings, transaction.symbol);
-    this.addTransactionViewProperties(transaction);
+    
+    transaction.addViewModelProperties();
 
     if (holding === null) {
       holding = {
@@ -78,20 +82,6 @@ class Portfolio {
     } else {
       return null;
     }
-  }
-
-  addTransactionViewProperties(transaction) {
-    var moment = require('moment');
-
-    if (transaction.name && transaction.name.length > 15) {
-      transaction.name = transaction.name.substring(0, 15).trim() + "...";
-    }
-
-    transaction.timestampString = moment().format("MM/DD/YYYY");
-    transaction.priceString = numeral(transaction.price).format('$0,0.00');
-    transaction.commissionString = numeral(transaction.commission).format('$0,0.00');
-    transaction.total = (transaction.price * transaction.shares) + transaction.commission;
-    transaction.totalString = numeral(transaction.total).format('$0,0.00');
   }
 
   calculateHoldings() {
@@ -181,12 +171,19 @@ class Portfolio {
 
   calculateCashTotals() {
     var cash = 0;
+
+    // first add in all of the cash transactions
     for (var cashTransaction of this.cashTransactions) {
       if (cashTransaction.transaction_type.toLowerCase() === 'deposit') {
         cash += cashTransaction.amount;
       } else {
         cash -= cashTransaction.amount;
       }
+    }
+
+    // then, subtract out the total from all stock transactions
+    for (var transaction of this.transactions) {
+      cash -= transaction.total();
     }
 
     this.cash = cash;
