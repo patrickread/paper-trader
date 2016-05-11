@@ -1,6 +1,7 @@
 import React from 'react'
 import StockLine from './StockLine'
 import Portfolio from './Models/Portfolio'
+import Holding from './Models/Holding'
 import Total from './Total'
 
 var PortfolioTab = React.createClass({
@@ -31,7 +32,7 @@ var PortfolioTab = React.createClass({
                         </StockLine>)
       }
     } else {
-      var blankStock = Portfolio.blankStock();
+      var blankStock = Holding.blankHolding();
       for (var i=0; i<3; i++) {
         stockLines.push(<StockLine key={i} blankEntry={true} stock={blankStock}>
                           </StockLine>)

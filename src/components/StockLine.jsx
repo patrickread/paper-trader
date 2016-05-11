@@ -1,9 +1,11 @@
 import React from 'react'
 
+import DownArrow from './images/down_arrow@2x.png';
+
 var StockLine = React.createClass({
   getInitialState: function () {
     return {
-      
+      expanded: false
     }
   },
 
@@ -17,6 +19,12 @@ var StockLine = React.createClass({
 
   onGraph: function() {
     console.log("Gonna graph. Not implemented, though!");
+  },
+
+  onToggleExpand: function() {
+    this.setState({
+      expanded: !this.state.expanded
+    })
   },
 
   onTrade: function() {
@@ -35,6 +43,10 @@ var StockLine = React.createClass({
 
     if (this.props.blankEntry) {
       topLineClasses += ' blank-entry';
+    }
+
+    if (this.state.expanded) {
+      topLineClasses += ' expanded';
     }
 
     return <div style={this.props.style} className={topLineClasses}>
@@ -56,12 +68,21 @@ var StockLine = React.createClass({
           <h1 className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</h1>
         </div>
       </div>
+      <div className="row expanded-row">
+        <div className="col-xs-6 col-sm-3">
+          <label className="loaded-label">Total Shares</label>
+          <div className="loaded-text regular">{this.props.stock.shares}</div>
+        </div>
+      </div>
       <div className="row toolbar">
         <div className="toolbar-item" onClick={this.onTrade}>
           Trade
         </div>
         <div className="toolbar-item" onClick={this.onGraph}>
           Graph
+        </div>
+        <div className="toolbar-item toolbar-right" onClick={this.onToggleExpand}>
+          <img src={DownArrow} />
         </div>
       </div>
     </div>

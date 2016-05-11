@@ -1,6 +1,7 @@
 import QuoteService from '../Apis/QuoteService'
 import PusherService from '../Apis/PusherService'
 import ReactDOM from 'react-dom'
+import Holding from '../Models/Holding'
 import Transaction from '../Models/Transaction'
 import _ from "underscore";
 
@@ -12,24 +13,6 @@ class Portfolio {
     this.holdings = this.calculateHoldings();
     this.cashTransactions = [];
     this.cash = 1034.56;
-  }
-
-  static blankStock() {
-    return {
-      key: 1,
-      symbol: 'PAPR',
-      name: 'Paper',
-      changePercentObj: {
-        number: 0,
-        string: "…",
-        className: ""
-      },
-      holdingChangeObj: {
-        number: 0,
-        string: "…",
-        className: ""
-      }
-    };
   }
 
   addTransaction(transaction) {
@@ -55,27 +38,18 @@ class Portfolio {
     transaction.addViewModelProperties();
 
     if (holding === null) {
-      holding = {
+      var options = {
         key: holdings.length,
         symbol: transaction.symbol,
         name: transaction.name,
-        shares: 0,
-        costBasis: 0,
-        price: transaction.price,
-        priceString: transaction.priceString,
-        previousOpen: 0,
-        changePercentObj: {},
-        holdingChangeObj: {}
+        price: transaction.price
       };
+
+      holding = new Holding(options);
       addingNewHolding = true;
     }
 
-    if (transaction.transaction_type == "buy") {
-      holding.shares += transaction.shares;
-    } else {
-      // sell
-      holding.shares -= transaction.shares;
-    }
+    holding.addShares(transaction);
 
     if (addingNewHolding) {
       return holding;
@@ -113,11 +87,7 @@ class Portfolio {
     var stock = that.findStockForSymbol(data.symbol);
     
     if (stock) {
-      stock.price = data.price;
-      stock.priceString = numeral(stock.price).format('$0,0.00');
-      stock.changePercentObj = that.changePercentObj(data.change_percent);
-      stock.holdingChangeObj = that.holdingChangeObj(data.change_numeric, stock.shares);
-      stock.previousOpen = data.open;
+      stock.update(data);
     }
   }
 
@@ -158,9 +128,10 @@ class Portfolio {
   calculateTotals() {
     var totalChanges = 0;
     var startValue = 0; // value at the start of trading
+
     for (var stock of this.holdings) {
       totalChanges += stock.holdingChangeObj.number;
-      startValue += stock.previousOpen * stock.shares;
+      startValue += stock.today.open * stock.shares;
     }
 
     return {
@@ -197,38 +168,6 @@ class Portfolio {
     }
 
     return null;
-  }
-
-  changePercentObj(changePercent) {
-    var changePercent = {
-      number: changePercent / 100.0
-    };
-
-    changePercent.string = numeral(changePercent.number).format('0,0.00%');
-    if (changePercent.number >= 0) {
-      changePercent.string = changePercent.string.replace(/^/, '+');
-      changePercent.className = "positive";
-    } else {
-      changePercent.className = "negative";
-    }
-
-    return changePercent;
-  }
-
-  holdingChangeObj(dollarChange, shares) {
-    var holdingChange = {
-      number: dollarChange * shares
-    };
-
-    holdingChange.string = numeral(holdingChange.number).format('$0,0.00');
-    if (holdingChange.number >= 0) {
-      holdingChange.string = holdingChange.string.replace(/^/, '+');
-      holdingChange.className = "positive";
-    } else {
-      holdingChange.className = "negative";
-    }
-
-    return holdingChange;
   }
 }
 
