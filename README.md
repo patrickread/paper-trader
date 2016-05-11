@@ -20,3 +20,4 @@ A paper trading app. Inspired by my long-time use of Google Finance, and my exha
  - Timestamping stock transactions and cash transactions
  - Graphs
  - First-time use guide
+ - Keyboard-based navigation
