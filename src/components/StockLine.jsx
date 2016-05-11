@@ -36,7 +36,7 @@ var StockLine = React.createClass({
     var holdingChangeClassName = "loaded-text holding-change ";
     if (this.props.stock !== undefined) {
       changePercentClassName += this.props.stock.changePercentObj.className;
-      holdingChangeClassName += this.props.stock.holdingChangeObj.className;
+      holdingChangeClassName += this.props.stock.changeNumbericObj.className;
     }
 
     var topLineClasses = 'content-line stock-line container';
@@ -65,13 +65,25 @@ var StockLine = React.createClass({
         </div>
         <div className="col-xs-6 col-sm-3">
           <label className="loaded-label right">$ Change Today</label>
-          <h1 className={holdingChangeClassName}>{this.props.stock.holdingChangeObj.string}</h1>
+          <h1 className={holdingChangeClassName}>{this.props.stock.changeNumbericObj.string}</h1>
         </div>
       </div>
       <div className="row expanded-row">
         <div className="col-xs-6 col-sm-3">
           <label className="loaded-label">Total Shares</label>
           <div className="loaded-text regular">{this.props.stock.shares}</div>
+        </div>
+        <div className="hidden-xs col-sm-3">
+          <label className="loaded-label">Cost Basis</label>
+          <div className="loaded-text regular">{this.props.stock.costBasis.string}</div>
+        </div>
+        <div className="hidden-xs col-sm-3">
+          <label className="loaded-label">Market Value</label>
+          <div className="loaded-text regular">{this.props.stock.marketValue.string}</div>
+        </div>
+        <div className="col-xs-6 col-sm-3">
+          <label className="loaded-label right">Overall Return</label>
+          <div className="loaded-text regular right">{this.props.stock.overallReturn.string}</div>
         </div>
       </div>
       <div className="row toolbar">

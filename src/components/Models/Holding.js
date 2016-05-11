@@ -8,6 +8,9 @@ class Holding {
     }
 
     this.today = {};
+    this.costBasis = {};
+    this.marketValue = {};
+    this.overallReturn = {};
     this.shares = 0;
 
     this.addViewModelProperties();
@@ -18,19 +21,34 @@ class Holding {
       key: 1,
       symbol: 'PAPR',
       name: 'Paper',
+      price: 0,
+      shares: 0,
       changePercentObj: {
         number: 0,
         string: "…",
         className: ""
       },
-      holdingChangeObj: {
+      changeNumbericObj: {
         number: 0,
         string: "…",
         className: ""
+      },
+      costBasis: {
+        number: 0,
+        string: "…"
+      },
+      marketValue: {
+        number: 0,
+        string: "…"
+      },
+      overallReturn: {
+        number: 0,
+        string: "…"
       }
     };
   }
 
+  // Update the holding with numbers from today or the most recent day of trading.
   update(newData) {
     this.price = newData.price;
     this.priceString = numeral(newData.price).format('$0,0.00');
@@ -39,12 +57,17 @@ class Holding {
     this.addViewModelProperties()
   }
 
+  // Generate some presentation layer pieces
   addViewModelProperties(options={}) {
     this.updateChangePercentObj();
     this.updateChangeNumericObj();
     this.priceString = numeral(this.price).format('$0,0.00');
+
+    this.updateMarketValue();
+    this.updateOverallReturn();
   }
 
+  // Update from a new incoming transaction
   addShares(transaction) {
     if (transaction.transaction_type == "buy") {
       this.shares += transaction.shares;
@@ -54,6 +77,9 @@ class Holding {
     }
 
     this.updateChangeNumericObj();
+    this.addToCostBasis(transaction);
+    this.updateMarketValue();
+    this.updateOverallReturn();
   }
 
   updateChangePercentObj() {
@@ -61,7 +87,23 @@ class Holding {
   }
 
   updateChangeNumericObj() {
-    this.holdingChangeObj = this.getChangeNumericObj(this.today.changeNumeric || 0, this.shares || 0);
+    this.changeNumbericObj = this.getChangeNumericObj(this.today.changeNumeric || 0, this.shares || 0);
+  }
+
+  updateMarketValue() {
+    var marketValue = this.price * this.shares;
+    this.marketValue = {
+      number: marketValue,
+      string: numeral(marketValue).format('$0,0.00')
+    }
+  }
+
+  updateOverallReturn() {
+    var overallReturn = (this.marketValue.number || 0) - (this.costBasis.number || 0);
+    this.overallReturn = {
+      number: overallReturn,
+      string: numeral(overallReturn).format('$0,0.00')
+    }
   }
 
   getChangePercentObj(changePercent) {
@@ -94,6 +136,22 @@ class Holding {
     }
 
     return holdingChange;
+  }
+
+  addToCostBasis(transaction) {
+    if (!this.costBasis || Object.keys(this.costBasis).length === 0) {
+      this.costBasis = {
+        commission: 0,
+        trade: 0,
+        number: 0,
+        string: ''
+      }
+    }
+
+    this.costBasis.commission += transaction.commission;
+    this.costBasis.trade += transaction.shares * transaction.price;
+    this.costBasis.number = this.costBasis.trade + this.costBasis.commission;
+    this.costBasis.string = numeral(this.costBasis.number).format('$0,0.00');
   }
 }
 

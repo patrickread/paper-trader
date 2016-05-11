@@ -130,7 +130,7 @@ class Portfolio {
     var startValue = 0; // value at the start of trading
 
     for (var stock of this.holdings) {
-      totalChanges += stock.holdingChangeObj.number;
+      totalChanges += stock.changeNumbericObj.number;
       startValue += stock.today.open * stock.shares;
     }
 
