@@ -55,17 +55,27 @@ var StockLine = React.createClass({
           <label className="name">{this.props.stock.name || ''}</label>
           <h1 className="symbol">{this.props.stock.symbol}</h1>
         </div>
-        <div className="hidden-xs col-sm-2">
+        <div className="hidden-xs col-sm-3">
           <label className="loaded-label">Share Price</label>
           <div className="loaded-text price">{this.props.stock.priceString}</div>
         </div>
-        <div className="hidden-xs col-sm-3 col-sm-offset-1">
+        <div className="hidden-xs col-sm-3">
           <label className="loaded-label">% Change Today</label>
           <div className={changePercentClassName}>{this.props.stock.changePercentObj.string}</div>
         </div>
         <div className="col-xs-6 col-sm-3">
           <label className="loaded-label right">$ Change Today</label>
           <h1 className={holdingChangeClassName}>{this.props.stock.changeNumbericObj.string}</h1>
+        </div>
+      </div>
+      <div className="row expanded-row extra">
+        <div className="col-xs-6 hidden-sm">
+          <label className="loaded-label">Share Price</label>
+          <div className="loaded-text price">{this.props.stock.priceString}</div>
+        </div>
+        <div className="col-xs-6 hidden-sm">
+          <label className="loaded-label right">% Change Today</label>
+          <div className={changePercentClassName + " right"}>{this.props.stock.changePercentObj.string}</div>
         </div>
       </div>
       <div className="row expanded-row">

@@ -1,6 +1,9 @@
 import React from 'react'
 import QuoteService from './Apis/QuoteService'
 import { Select, Option } from './Shared/Select'
+import DatePicker from './Shared/DatePicker'
+
+var moment = require('moment');
 
 var CreateTransaction = React.createClass({
   getInitialState: function () {
@@ -56,6 +59,15 @@ var CreateTransaction = React.createClass({
     transaction[targetName] = value;
 
     this.setState({ transaction: transaction});
+  },
+
+  onTimestampChanged: function(value) {
+    var transaction = this.state.transaction;
+    transaction.timestamp = value;
+
+    this.setState({
+      transaction: transaction
+    });
   },
 
   validateShares: function(value) {
@@ -214,7 +226,7 @@ var CreateTransaction = React.createClass({
             <input type="text" id="price" name="price" className={priceClasses} 
             placeholder="56.46" type="number" max="1000000" min="0" step="0.01" 
             value={this.state.transaction.price} onChange={this.handleChange} />
-            <div className="text">a share now.</div>
+            <div className="text">a share</div><DatePicker onChange={this.onTimestampChanged} /><div className="text">.</div>
           </div>
           <div>
             <div className="text">My broker charged me $</div>
@@ -294,8 +306,10 @@ var CreateTransaction = React.createClass({
       });
 
       var transaction = this.state.transaction;
-      var moment = require('moment');
-      transaction.timestamp = moment().format("YYYY-MM-DDTHH:mm:ss");
+
+      if (!transaction.timestamp) {
+        transaction.timestamp = moment().format("YYYY-MM-DDTHH:mm:ss");
+      }
     
       this.props.needTransactionCreation(transaction, this.transactionCompleted);
     }

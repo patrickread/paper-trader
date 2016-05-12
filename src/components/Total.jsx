@@ -58,12 +58,12 @@ var Total = React.createClass({
             Summary
           </h2>
         </div>
-        <div className="hidden-xs col-sm-2">
+        <div className="hidden-xs col-sm-3">
           <label className="loaded-label">Cash</label>
           <div className="loaded-text price">{numeral(this.props.cash).format('$0,0.00')}</div>
           <div className="edit-icon" onClick={this.editCash}><img src={EditIcon} /></div>
         </div>
-        <div className="hidden-xs col-sm-3 col-sm-offset-1">
+        <div className="hidden-xs col-sm-3">
           <label className="loaded-label">% Change Today</label>
           <div className={changePercentClassName}>{percentChangeTodayString}</div>
         </div>

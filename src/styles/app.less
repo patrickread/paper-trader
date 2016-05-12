@@ -244,6 +244,14 @@ html, body
       font-size: 18px;
       color: rgba(0,0,0,0.54);
       line-height: 24px;
+
+      .text-bottom-border
+      {
+        margin: 0px 5px;
+        padding-bottom: 1px;
+        border-bottom: 1px solid #979797;
+        cursor: pointer;
+      }
     }
 
     section.options
@@ -357,8 +365,9 @@ html, body
     dialog.create-transaction
     {
       display: block;
+      height: 300px;
 
-      input[type="text"],input[type="number"]
+      input[type="text"],input[type="number"],input[type="date"]
       {
         &#shares
         {
@@ -378,6 +387,11 @@ html, body
         &#commission
         {
           width: 50px;
+        }
+
+        &#timestamp-picker
+        {
+          width: 157px;
         }
       }
 
@@ -430,7 +444,7 @@ html, body
         display: inline-block;
       }
 
-      input[type="text"],input[type="number"]
+      input[type="text"],input[type="number"],input[type="date"]
       {
         display: inline-block;
         background: none;
@@ -556,7 +570,34 @@ html, body
 
         &.expanded
         {
-          height: 204px;
+          @media (max-width: 767px)
+          {
+            height: 286px;
+
+            .expanded-row
+            {
+              margin-top: 15px;
+              margin-bottom: 15px;
+            }
+          }
+
+          @media (min-width: 768px)
+          {
+            height: 204px;
+
+            .expanded-row
+            {
+              &.extra
+              {
+                display: none;
+              }
+            }
+          }
+
+          .expanded-row
+          {
+            display: block;
+          }
 
           .toolbar .toolbar-item.toolbar-right img
           {
@@ -616,7 +657,15 @@ html, body
 
         div.price
         {
-          margin-top: 8px;
+          @media (max-width: 1159px)
+          {
+            margin-top: 10px;
+          }
+
+          @media (min-width: 1200px)
+          {
+            margin-top: 8px;
+          }
         }
 
         div.change-percent
@@ -679,10 +728,20 @@ html, body
       .price
       {
         float: left;
-        margin-top: 16px;
         color: rgba(0, 0, 0, 0.87);
-        font-size: 24px;
         font-weight: 600;
+
+        @media (max-width: 1159px)
+        {
+          margin-top: 18px;
+          font-size: 22px;
+        }
+
+        @media (min-width: 1200px)
+        {
+          margin-top: 16px;
+          font-size: 24px;
+        }
       }
 
       .regular
@@ -833,5 +892,13 @@ html, body
   .create-cash-transaction
   {
     display: none;
+  }
+
+  .stock-line
+  {
+    .expanded-row
+    {
+      display: none;
+    }
   }
 }
