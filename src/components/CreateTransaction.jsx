@@ -39,7 +39,7 @@ var CreateTransaction = React.createClass({
 
   handleChange: function(event) {
     if (typeof event === 'string' || event instanceof String) {
-      var targetName = 'type';
+      var targetName = 'transaction_type';
       var value = event;
     } else {
       var targetName = event.target.name;

@@ -71,7 +71,6 @@ class Portfolio {
   }
 
   removeTransaction(transaction) {
-    debugger;
     var transactions = this.transactions;
     for (var i=0; i<transactions.length; i++) {
       var trans = transactions[i];
