@@ -49,7 +49,7 @@ class Portfolio {
       addingNewHolding = true;
     }
 
-    holding.addShares(transaction);
+    holding.addTransaction(transaction);
 
     if (addingNewHolding) {
       return holding;
@@ -68,6 +68,34 @@ class Portfolio {
     }
 
     return holdings;
+  }
+
+  removeTransaction(transaction) {
+    debugger;
+    var transactions = this.transactions;
+    for (var i=0; i<transactions.length; i++) {
+      var trans = transactions[i];
+      if (trans.id === transaction.id) {
+        transactions.splice(i, 1);
+        break;
+      }
+    }
+
+    var holding = this.findHolding(this.holdings, transaction.symbol);
+    if (!!holding) {
+      holding.removeTransaction(transaction);
+
+      if (holding.shares === 0) {
+        // remove holding completely, as there's no remaining shares
+        for (var i=0; i<this.holdings.length; i++) {
+          var thisHolding = this.holdings[i];
+          if (holding.symbol === thisHolding.symbol) {
+            this.holdings.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
   }
 
   symbolUpdatedAndUpdateUI(data, caller) {

@@ -67,8 +67,7 @@ class Holding {
     this.updateOverallReturn();
   }
 
-  // Update from a new incoming transaction
-  addShares(transaction) {
+  addTransaction(transaction) {
     if (transaction.transaction_type == "buy") {
       this.shares += transaction.shares;
     } else {
@@ -78,6 +77,20 @@ class Holding {
 
     this.updateChangeNumericObj();
     this.addToCostBasis(transaction);
+    this.updateMarketValue();
+    this.updateOverallReturn();
+  }
+
+  removeTransaction(transaction) {
+    // reverse the add
+    if (transaction.transaction_type == "buy") {
+      this.shares -= transaction.shares;
+    } else {
+      this.shares += transaction.shares;
+    }
+
+    this.updateChangeNumericObj();
+    this.removeFromCostBasis(transaction);
     this.updateMarketValue();
     this.updateOverallReturn();
   }
@@ -139,6 +152,22 @@ class Holding {
   }
 
   addToCostBasis(transaction) {
+    this.initCostBasisIfNecessary();
+
+    this.costBasis.commission += transaction.commission;
+    this.costBasis.trade += transaction.shares * transaction.price;
+    this.updateCostBasisSummary();
+  }
+
+  removeFromCostBasis(transaction) {
+    this.initCostBasisIfNecessary();
+
+    this.costBasis.commission -= transaction.commission;
+    this.costBasis.trade -= transaction.shares * transaction.price;
+    this.updateCostBasisSummary();
+  }
+
+  initCostBasisIfNecessary() {
     if (!this.costBasis || Object.keys(this.costBasis).length === 0) {
       this.costBasis = {
         commission: 0,
@@ -147,9 +176,9 @@ class Holding {
         string: ''
       }
     }
+  }
 
-    this.costBasis.commission += transaction.commission;
-    this.costBasis.trade += transaction.shares * transaction.price;
+  updateCostBasisSummary() {
     this.costBasis.number = this.costBasis.trade + this.costBasis.commission;
     this.costBasis.string = numeral(this.costBasis.number).format('$0,0.00');
   }

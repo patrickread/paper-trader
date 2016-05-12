@@ -137,16 +137,10 @@ var App = React.createClass({
   },
 
   deleteTransaction: function(transaction) {
-    var transactions = this.state.portfolio.transactions;
-    for (var trans of transactions) {
-      if (trans.id === transaction.id) {
-        transactions.splice(trans, 1);
-      }
-    }
-    var portfolio = new Portfolio(transactions);
+    this.state.portfolio.removeTransaction(transaction);
 
     this.setState({
-      portfolio: portfolio
+      portfolio: this.state.portfolio
     });
 
     this._apiService.deleteTransaction(transaction, 
