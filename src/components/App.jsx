@@ -10,6 +10,7 @@ import LoadingDialog from './Shared/LoadingDialog'
 import CreateTransaction from './CreateTransaction'
 import CreateCashTransaction from './CreateCashTransaction'
 import ApiService from './Apis/ApiService'
+import { browserHistory } from 'react-router'
 
 import '../styles/app.less'
 
@@ -46,6 +47,10 @@ var App = React.createClass({
 
     var token = reactCookie.load('id_token');
     if (token !== undefined) {
+      if (this.props.location.pathname === "/") {
+        browserHistory.replace('portfolio');
+      }
+
       if (this.state.loadingDialog.open) {
         appClassName += ' loading';
       } else if (this.state.dialogOpened) {
