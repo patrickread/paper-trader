@@ -49,16 +49,6 @@ var DatePicker = React.createClass({
     } else {
       return <div className="text">on <input id="timestamp-picker" type="date" value={this.state.value} onChange={this.onChange}></input></div>
     }
-  },
-
-  confirm: function(event) {
-    event.stopPropagation();
-    this.props.confirm();
-  },
-
-  cancel: function(event) {
-    event.stopPropagation();
-    this.props.cancel();
   }
 })
 

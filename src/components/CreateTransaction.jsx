@@ -2,6 +2,7 @@ import React from 'react'
 import QuoteService from './Apis/QuoteService'
 import { Select, Option } from './Shared/Select'
 import DatePicker from './Shared/DatePicker'
+import ExpandingInput from './Shared/ExpandingInput'
 
 var moment = require('moment');
 
@@ -215,25 +216,25 @@ var CreateTransaction = React.createClass({
               <Option value="buy">buy</Option>
               <Option value="sell">sell</Option>
             </Select>
-            <input type="text" id="shares" name="shares" className={shareClasses} 
+            <ExpandingInput type="text" id="shares" name="shares" className={shareClasses} 
               placeholder="12" type="number" max="1000000" min="0" step="1" 
-              value={this.state.transaction.shares} onChange={this.handleChange} />
+              value={this.state.transaction.shares} onInputChange={this.handleChange} />
             <div className="text">shares of </div>
-            <input type="text" id="symbol" name="symbol" className={symbolClasses} 
+            <ExpandingInput type="text" id="symbol" name="symbol" className={symbolClasses} 
             placeholder="MSFT" value={this.state.transaction.symbol} 
-            onChange={this.handleChange} onBlur={this.handleBlur} />
+            onInputChange={this.handleChange} onBlur={this.handleBlur} />
             <div className="text"> for $</div>
-            <input type="text" id="price" name="price" className={priceClasses} 
+            <ExpandingInput type="text" id="price" name="price" className={priceClasses} 
             placeholder="56.46" type="number" max="1000000" min="0" step="0.01" 
-            value={this.state.transaction.price} onChange={this.handleChange} />
+            value={this.state.transaction.price} onInputChange={this.handleChange} />
             <div className="text">a share</div><DatePicker value={this.state.transaction.timestamp} onChange={this.onTimestampChanged} /><div className="text">.</div>
           </div>
           <div>
             <div className="text">My broker charged me $</div>
-            <input type="text" id="commission" name="commission" 
+            <ExpandingInput type="text" id="commission" name="commission" 
             className={commissionClasses} placeholder="7.00" type="number" max="10000" 
             min="0" step="0.01" value={this.state.transaction.commission} 
-            onChange={this.handleChange} />
+            onInputChange={this.handleChange} />
             <div className="text">commission on this deal.</div>
           </div>
         </section>
