@@ -226,7 +226,7 @@ var CreateTransaction = React.createClass({
             <input type="text" id="price" name="price" className={priceClasses} 
             placeholder="56.46" type="number" max="1000000" min="0" step="0.01" 
             value={this.state.transaction.price} onChange={this.handleChange} />
-            <div className="text">a share</div><DatePicker onChange={this.onTimestampChanged} /><div className="text">.</div>
+            <div className="text">a share</div><DatePicker value={this.state.transaction.timestamp} onChange={this.onTimestampChanged} /><div className="text">.</div>
           </div>
           <div>
             <div className="text">My broker charged me $</div>
@@ -323,7 +323,8 @@ var CreateTransaction = React.createClass({
         symbol: this.props.symbol,
         price: this.props.price,
         commission: this.props.commission,
-        transaction_type: "buy"
+        transaction_type: "buy",
+        timestamp: 'now'
       }
     })
   },

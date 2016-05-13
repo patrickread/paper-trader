@@ -11,8 +11,14 @@ var DatePicker = React.createClass({
   },
 
   componentWillMount: function () {
-    if (!!this.props.lockedToNow) {
-      this.state.lockedToNow = this.props.lockedToNow;
+    if (!!this.props.value) {
+      this.state.value = this.props.value;
+    }
+  },
+
+  componentWillReceiveProps: function(newProps) {
+    if (!!newProps.value) {
+      this.state.value = moment(newProps.value).format("YYYY-MM-DD");
     }
   },
 
@@ -38,7 +44,7 @@ var DatePicker = React.createClass({
   },
 
   render: function () {
-    if (this.state.lockedToNow) {
+    if (this.state.value === 'now') {
       return <div className="text-bottom-border text" onClick={this.nowClicked}>now</div>
     } else {
       return <div className="text">on <input id="timestamp-picker" type="date" value={this.state.value} onChange={this.onChange}></input></div>

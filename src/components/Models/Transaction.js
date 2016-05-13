@@ -22,10 +22,14 @@ class Transaction {
       this.name = this.name.substring(0, 17).trim() + "...";
     }
 
+    this.price = parseFloat(this.price);
+    this.shares = parseInt(this.shares);
+    this.commission = parseFloat(this.commission);
+
     this.timestampString = this.timestamp.format("MM/DD/YYYY");
     this.priceString = numeral(this.price).format('$0,0.00');
     this.commissionString = numeral(this.commission).format('$0,0.00');
-    this.totalString = numeral(this.total()).format('$0,0.00');
+    this.totalString = numeral(-1 * this.total()).format('$0,0.00');
   }
 
   total() {
@@ -33,6 +37,7 @@ class Transaction {
     if (this.transaction_type.toLowerCase() === 'sell') {
       typeFactor = -1;
     }
+
     return (typeFactor * (this.price * this.shares)) + this.commission;
   }
 }

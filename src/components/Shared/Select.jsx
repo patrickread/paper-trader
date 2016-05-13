@@ -15,6 +15,12 @@ var Select = onClickOutside(React.createClass({
     
   },
 
+  componentWillReceiveProps: function(newProps) {
+    if (!!newProps.value) {
+      this.state.value = newProps.value;
+    }
+  },
+
   componentWillUnmount () {
     
   },
