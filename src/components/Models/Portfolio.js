@@ -22,6 +22,7 @@ class Portfolio {
     if (holding !== null) {
       this.holdings.push(holding);
     }
+    holding.updateCostBasis();
 
     this.calculateTotals();
   }
@@ -67,6 +68,10 @@ class Portfolio {
       }
     }
 
+    for (var holding of holdings) {
+      holding.updateCostBasis();
+    }
+
     return holdings;
   }
 
@@ -93,6 +98,8 @@ class Portfolio {
             break;
           }
         }
+      } else {
+        holding.updateCostBasis();
       }
     }
   }

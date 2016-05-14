@@ -12,6 +12,7 @@ class Holding {
     this.marketValue = {};
     this.overallReturn = {};
     this.shares = 0;
+    this.transactions = [];
 
     this.addViewModelProperties();
   }
@@ -76,7 +77,7 @@ class Holding {
     }
 
     this.updateChangeNumericObj();
-    this.addToCostBasis(transaction);
+    this.transactions.push(transaction);
     this.updateMarketValue();
     this.updateOverallReturn();
   }
@@ -89,10 +90,22 @@ class Holding {
       this.shares += transaction.shares;
     }
 
+    this.removeTransactionFromArray(transaction);
+
     this.updateChangeNumericObj();
-    this.removeFromCostBasis(transaction);
     this.updateMarketValue();
     this.updateOverallReturn();
+  }
+
+  removeTransactionFromArray(transaction) {
+    var transactions = this.transactions;
+    for (var i=0; i<transactions.length; i++) {
+      var trans = transactions[i];
+      if (trans.id === transaction.id) {
+        transactions.splice(i, 1);
+        break;
+      }
+    }
   }
 
   updateChangePercentObj() {
@@ -151,11 +164,56 @@ class Holding {
     return holdingChange;
   }
 
-  addToCostBasis(transaction) {
+  updateCostBasis() {
     this.initCostBasisIfNecessary();
 
-    this.costBasis.commission += transaction.commission;
-    this.costBasis.trade += transaction.shares * transaction.price;
+    // assume transactions are sorted
+    var buyTransactionData = [];
+    for (var i=0; i<this.transactions.length; i++) {
+      var transaction = this.transactions[i];
+
+      if (transaction.transaction_type === "buy") {
+        buyTransactionData.push({ timestamp: transaction.timestamp.toDate(), price: transaction.price, shares: transaction.shares, commission: transaction.commission});
+      } else {
+        // take care of a sell in FIFO (IRS) style
+        var sharesToRemove = transaction.shares;
+
+        // Iterate through buy transactions in FIFO order, and take the sold
+        // shares out so they don't count towards the cost basis
+        for (var j=0; j<buyTransactionData.length; j++) {
+          var transactionDatum = buyTransactionData[j];
+          if (transactionDatum.shares >= 0) {
+            if (transactionDatum.shares >= sharesToRemove) {
+              transactionDatum.shares -= sharesToRemove;
+              sharesToRemove = 0;
+              if (transactionDatum.shares === 0) {
+                buyTransactionData.splice(j, 1);
+                j--;
+              }
+              break;
+            } else {
+              sharesToRemove -= transactionDatum.shares;
+              transactionDatum.shares = 0;
+              buyTransactionData.splice(j, 1);
+              j--;
+              if (sharesToRemove === 0) {
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // now calculate the cost basis
+    this.costBasis.commission = 0;
+    this.costBasis.trade = 0;
+    for (var i=0; i<buyTransactionData.length; i++) {
+      var transaction = buyTransactionData[i];
+      this.costBasis.commission += transaction.commission;
+      this.costBasis.trade += transaction.shares * transaction.price
+    }
+    
     this.updateCostBasisSummary();
   }
 
@@ -163,7 +221,13 @@ class Holding {
     this.initCostBasisIfNecessary();
 
     this.costBasis.commission -= transaction.commission;
-    this.costBasis.trade -= transaction.shares * transaction.price;
+
+    var typeFactor = -1;
+    if (transaction.transaction_type === "sell") {
+      typeFactor = 1;
+    }
+
+    this.costBasis.trade -= typeFactor * transaction.shares * transaction.price;
     this.updateCostBasisSummary();
   }
 
