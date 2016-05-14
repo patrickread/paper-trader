@@ -162,15 +162,26 @@ class Portfolio {
   calculateTotals() {
     var totalChanges = 0;
     var startValue = 0; // value at the start of trading
+    var costBasis = 0;
+    var marketValue = 0;
+    var overallReturn = 0;
 
     for (var stock of this.holdings) {
       totalChanges += stock.changeNumbericObj.number;
       startValue += stock.today.open * stock.shares;
+      costBasis += stock.costBasis.number;
+      marketValue += stock.marketValue.number;
+      overallReturn += stock.overallReturn.number;
     }
+
+    marketValue += this.cash;
 
     return {
       dollarChangeToday: totalChanges,
-      percentChangeToday: totalChanges / startValue
+      percentChangeToday: totalChanges / startValue,
+      costBasis: costBasis,
+      marketValue: marketValue,
+      overallReturn: overallReturn
     }
   }
 
