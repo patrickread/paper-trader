@@ -17,9 +17,9 @@ A paper trading app. Inspired by my long-time use of Google Finance, and my exha
  
 ## TODOS
 
- - Timestamping cash transactions
  - Adding overall return and other stats to summary
  - Make day's changes accurate if a trade is made intraday
+ - Error message system
  - Graphs
  - First-time use guide
  - Keyboard-based navigation

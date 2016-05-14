@@ -252,6 +252,14 @@ html, body
         border-bottom: 1px solid #979797;
         cursor: pointer;
       }
+
+      input[type="date"]
+      {
+        &#timestamp-picker
+        {
+          width: 162px;
+        }
+      }
     }
 
     section.options
@@ -392,11 +400,6 @@ html, body
           min-width: 50px;
           width: 50px;
         }
-
-        &#timestamp-picker
-        {
-          width: 157px;
-        }
       }
 
       .select-box
@@ -415,11 +418,12 @@ html, body
     {
       display: block;
 
-      input[type="text"],input[type="number"]
+      input[type="text"],input[type="number"],input[type="date"]
       {
         &#amount
         {
-          width: 100px;
+          min-width: 60px;
+          width: 60px;
         }
       }
 

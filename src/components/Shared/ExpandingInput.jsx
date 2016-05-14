@@ -20,7 +20,9 @@ var ExpandingInput = React.createClass({
       this.state.value = newProps.value;
     }
 
-    this.state.width = newProps.width;
+    if (!!newProps.width) {
+      this.state.width = newProps.width;
+    }
   },
 
   componentWillUnmount () {
@@ -34,7 +36,6 @@ var ExpandingInput = React.createClass({
     var multiplier = 1.5;
     var buffer = 40;
     var adjustedWidth = width * multiplier + buffer
-    console.log('width: ' + adjustedWidth);
 
     this.setState({
       value: value,

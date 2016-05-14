@@ -1,13 +1,16 @@
 import React from 'react'
 import { Select, Option } from './Shared/Select'
+import DatePicker from './Shared/DatePicker'
+import ExpandingInput from './Shared/ExpandingInput'
+
+var moment = require('moment');
 
 var CreateCashTransaction = React.createClass({
   getInitialState: function () {
     return {
       transaction: {
         amount: null,
-        transaction_type: "deposit",
-        timestamp: "now"
+        transaction_type: "deposit"
       },
       errors: {},
       transactionInProgress: false
@@ -40,6 +43,15 @@ var CreateCashTransaction = React.createClass({
     transaction[targetName] = value;
 
     this.setState({ transaction: transaction});
+  },
+
+  onTimestampChanged: function(value) {
+    var transaction = this.state.transaction;
+    transaction.timestamp = value;
+
+    this.setState({
+      transaction: transaction
+    });
   },
 
   validateAmount: function(value) {
@@ -93,10 +105,12 @@ var CreateCashTransaction = React.createClass({
               <Option value="withdraw">withdraw</Option>
             </Select>
             <div><div className="text">$</div>
-            <input type="text" id="amount" name="amount" className={amountClasses} 
+            <ExpandingInput type="text" id="amount" name="amount" className={amountClasses} 
             placeholder="100" type="number" max="100000000" min="0" step="0.01" 
-            value={this.state.transaction.amount} onChange={this.handleChange} /></div>
-            <div className="text">into my account now.</div>
+            value={this.state.transaction.amount} onInputChange={this.handleChange} /></div>
+            <div className="text">into my account </div>
+            <DatePicker value={this.state.transaction.timestamp} onChange={this.onTimestampChanged} />
+            <div className="text">.</div>
           </div>
         </section>
         <section className="options">
@@ -141,8 +155,9 @@ var CreateCashTransaction = React.createClass({
       });
 
       var transaction = this.state.transaction;
-      var moment = require('moment');
-      transaction.timestamp = moment().format("YYYY-MM-DDTHH:mm:ss");
+      if (!transaction.timestamp) {
+        transaction.timestamp = moment().format("YYYY-MM-DDTHH:mm:ss");
+      }
     
       this.props.needTransactionCreation(transaction, this.transactionCompleted);
     }
@@ -153,7 +168,8 @@ var CreateCashTransaction = React.createClass({
       transactionInProgress: false,
       transaction: {
         amount: this.props.amount,
-        transaction_type: "deposit"
+        transaction_type: "deposit",
+        timestamp: 'now'
       }
     })
   },
