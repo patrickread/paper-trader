@@ -28,7 +28,7 @@ var PortfolioTab = React.createClass({
 
     if (this.props.portfolio.holdings.length > 0) {
       for (var stock of this.props.portfolio.holdings) {
-        stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.trade}>
+        stockLines.push(<StockLine key={stock.key} stock={stock} onTrade={this.props.tradeStock}>
                         </StockLine>)
       }
     } else {

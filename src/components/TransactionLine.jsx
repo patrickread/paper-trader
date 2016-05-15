@@ -45,7 +45,7 @@ var TransactionLine = React.createClass({
         </div>
         <div className="col-xs-6 col-sm-2">
           <label className="right">Total</label>
-          <div className="loaded-text total-text right">{this.props.transaction.totalString}</div>
+          <h1 className="loaded-text h1 right">{this.props.transaction.totalString}</h1>
         </div>
       </div>
     </div>

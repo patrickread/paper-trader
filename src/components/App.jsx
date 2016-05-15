@@ -3,8 +3,6 @@ import Portfolio from './Models/Portfolio'
 import Header from './Shared/Header'
 import Tabs from './Shared/Tabs'
 import Tab from './Shared/Tab'
-import PortfolioTab from './PortfolioTab'
-import TransactionsTab from './TransactionsTab'
 import AddButton from './Shared/AddButton'
 import LoadingDialog from './Shared/LoadingDialog'
 import CreateTransaction from './CreateTransaction'
@@ -57,7 +55,7 @@ var App = React.createClass({
         appClassName += ' ' + this.state.dialogOpened;
       }
 
-      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio, deleteTransaction: this.deleteTransaction, openCreateCashTransaction: this.openCreateCashTransactionDialog});
+      var tabbedContent = React.cloneElement(this.props.children, {portfolio: this.state.portfolio, deleteTransaction: this.deleteAnyTransaction, openCreateCashTransaction: this.openCreateCashTransactionDialog, tradeStock: this.trade});
 
       var authedSection = 
         <div>
@@ -136,7 +134,15 @@ var App = React.createClass({
     this._apiService.getCashTransactions(this.cashTransactionsLoaded, this.cashTransactionsFailedToLoad);
   },
 
-  deleteTransaction: function(transaction) {
+  deleteAnyTransaction: function(transaction) {
+    if (transaction.transaction_type === 'buy' || transaction.transaction_type === 'sell') {
+      this.deleteStockTransaction(transaction);
+    } else {
+      this.deleteCashTransaction(transaction);
+    }
+  },
+
+  deleteStockTransaction: function(transaction) {
     this.state.portfolio.removeTransaction(transaction);
 
     this.setState({
@@ -144,6 +150,22 @@ var App = React.createClass({
     });
 
     this._apiService.deleteTransaction(transaction, 
+      function() {
+
+      },
+      function() {
+
+      });
+  },
+
+  deleteCashTransaction: function(cashTransaction) {
+    this.state.portfolio.removeCashTransaction(cashTransaction);
+
+    this.setState({
+      portfolio: this.state.portfolio
+    });
+
+    this._apiService.deleteCashTransaction(cashTransaction, 
       function() {
 
       },
@@ -170,8 +192,7 @@ var App = React.createClass({
 
   cashTransactionsLoaded: function(cash_transactions) {
     var portfolio = this.state.portfolio;
-    portfolio.cashTransactions = cash_transactions;
-    portfolio.calculateCashTotals();
+    portfolio.setCashTransactions(cash_transactions);
 
     this.setState({
       loadingDialog: {

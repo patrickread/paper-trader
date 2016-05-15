@@ -85,6 +85,20 @@ class ApiService {
     });
   }
 
+  deleteCashTransaction(transaction, deleteSucceeded, deleteFailed) {
+    var headers = this.getDefaultHeaders();
+
+    var params = { method: 'DELETE',
+                   headers: headers };
+
+    fetch(this.apiRoot + 'cash_transactions/' + transaction.id, params)
+    .then(function(response) {
+      deleteSucceeded();
+    }).catch(function(err) {
+      deleteFailed(err);
+    });
+  }
+
   // returns a promise
   getQuote(symbol) {
     var that = this;

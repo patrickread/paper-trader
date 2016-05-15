@@ -120,6 +120,11 @@ var Total = React.createClass({
           <label className="loaded-label">Total Cost Basis</label>
           <div className="loaded-text regular">{costBasisString}</div>
         </div>
+        <div className="col-xs-6 hidden-sm">
+          <label className="loaded-label">Cash</label>
+          <div className="loaded-text price">{numeral(this.props.cash).format('$0,0.00')}</div>
+          <div className="edit-icon" onClick={this.editCash}><img src={EditIcon} /></div>
+        </div>
       </div>
       <div className="row expanded-row">
         <div className="hidden-xs col-sm-offset-3 col-sm-3">

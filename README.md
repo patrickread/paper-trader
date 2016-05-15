@@ -19,7 +19,6 @@ A paper trading app. Inspired by my long-time use of Google Finance, and my exha
 
  - Make day's changes accurate if a trade is made intraday
  - Error message system
- - Show cash transactions in the transaction tab
  - Graphs
  - First-time use guide
  - Keyboard-based navigation

@@ -3,6 +3,7 @@ import PusherService from '../Apis/PusherService'
 import ReactDOM from 'react-dom'
 import Holding from '../Models/Holding'
 import Transaction from '../Models/Transaction'
+import CashTransaction from '../Models/CashTransaction'
 import _ from "underscore";
 
 var numeral = require('numeral');
@@ -28,7 +29,18 @@ class Portfolio {
   }
 
   addCashTransaction(cashTransaction) {
-    this.cashTransactions.push(cashTransaction);
+    var cashTransactionModel = new CashTransaction(cashTransaction);
+    this.cashTransactions.push(cashTransactionModel);
+    this.calculateCashTotals();
+  }
+
+  setCashTransactions(cashTransactions) {
+    this.cashTransactions = [];
+    for (var cashTransaction of cashTransactions) {
+      var cashTransactionModel = new CashTransaction(cashTransaction);
+      this.cashTransactions.push(cashTransactionModel);
+    }
+
     this.calculateCashTotals();
   }
 
@@ -100,6 +112,17 @@ class Portfolio {
         }
       } else {
         holding.updateCostBasis();
+      }
+    }
+  }
+
+  removeCashTransaction(cashTransaction) {
+    var cashTransactions = this.cashTransactions;
+    for (var i=0; i<cashTransactions.length; i++) {
+      var trans = cashTransactions[i];
+      if (trans.id === cashTransaction.id) {
+        cashTransactions.splice(i, 1);
+        break;
       }
     }
   }

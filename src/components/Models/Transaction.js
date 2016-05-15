@@ -16,8 +16,6 @@ class Transaction {
   }
 
   addViewModelProperties() {
-    var moment = require('moment');
-
     if (this.name && this.name.length > 17) {
       this.name = this.name.substring(0, 17).trim() + "...";
     }
@@ -29,7 +27,7 @@ class Transaction {
     this.timestampString = this.timestamp.format("MM/DD/YYYY");
     this.priceString = numeral(this.price).format('$0,0.00');
     this.commissionString = numeral(this.commission).format('$0,0.00');
-    this.totalString = numeral(-1 * this.total()).format('$0,0.00');
+    this.totalString = numeral(Math.abs(this.total())).format('$0,0.00');
   }
 
   total() {
