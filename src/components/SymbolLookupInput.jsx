@@ -1,11 +1,14 @@
 import React from 'react'
 import ExpandingInput from './Shared/ExpandingInput'
 import QuoteService from './Apis/QuoteService'
+import SymbolChoice from './SymbolChoice'
 
 var SymbolLookupInput = React.createClass({
   getInitialState: function () {
     return {
-      value: null
+      value: null,
+      choices: [],
+      choicesOpen: false
     }
   },
 
@@ -16,9 +19,7 @@ var SymbolLookupInput = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps) {
-    if (!!newProps.value) {
-      this.state.value = newProps.value;
-    }
+    this.state.value = newProps.value;
   },
 
   componentWillUnmount () {
@@ -35,6 +36,11 @@ var SymbolLookupInput = React.createClass({
     if (!!value) {
       quoteService.lookupCompany(value).then(function(data) {
         if (data.length > 0) {
+          that.setState({
+            choices: data,
+            choicesOpen: true
+          })
+
           var name = data[0].Name;          
           that.props.symbolFound(name, null);
         } else {
@@ -46,16 +52,41 @@ var SymbolLookupInput = React.createClass({
     }
   },
 
+  onChange: function (event) {
+    this.props.onInputChange(event);
+  },
+
+  selectChoice: function (choice) {
+    this.setState({
+      value: choice.Symbol,
+      choicesOpen: false
+    })
+  },
+
   render: function () {
-    if (!!this.state.width) {
-      var style = {
-        width: this.state.width
+    var choicesList = '';
+    if (this.state.choicesOpen) {
+      var choices = [];
+
+      for (var choice of this.state.choices) {
+        choices.push(<SymbolChoice choice={choice} parentOnClick={this.selectChoice}></SymbolChoice>)
       }
+
+      choicesList = <ul className="choices">
+          {choices}
+        </ul>
     }
 
-    return <ExpandingInput type="text" 
-            value={this.state.value}
-            onBlur={this.handleBlur} {...this.props} />
+    var props = Object.assign({}, this.props)
+    delete props.value
+
+    return <div className="symbol-lookup-input text">
+        <ExpandingInput type="text" 
+          value={this.state.value}
+          onBlur={this.handleBlur}
+          onInputChange={this.onChange} {...props} />
+        {choicesList}
+      </div>
   }
 })
 
