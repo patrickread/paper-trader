@@ -1,8 +1,8 @@
 import React from 'react'
-import QuoteService from './Apis/QuoteService'
 import { Select, Option } from './Shared/Select'
 import DatePicker from './Shared/DatePicker'
 import ExpandingInput from './Shared/ExpandingInput'
+import SymbolLookupInput from './SymbolLookupInput'
 
 var moment = require('moment');
 
@@ -160,33 +160,22 @@ var CreateTransaction = React.createClass({
     this.validateSymbol();
   },
 
-  handleBlur: function(event) {
-    var targetName = event.target.name;
-    var value = event.target.value;
+  symbolFound: function(stockName, errorMessage) {
+    if (!!errorMessage) {
+      var errors = this.state.errors;
+      errors.symbol = "Should be a valid stock.";
+      this.setState({
+        errors: errors
+      });
+    } else {
+      var transaction = this.state.transaction;
+      transaction.name = name;
+      var errors = this.state.errors;
+      errors.symbol = "";
 
-    if (targetName === 'symbol') {
-      var quoteService = new QuoteService();
-      var that = this;
-      quoteService.lookupCompany(value).then(function(data) {
-        if (data.length > 0) {
-          var name = data[0].Name;
-          var transaction = that.state.transaction;
-          transaction.name = name;
-          
-          var errors = that.state.errors;
-          errors.symbol = "";
-
-          that.setState({
-            transaction: transaction,
-            errors: errors
-          });
-        } else {
-          var errors = that.state.errors;
-          errors.symbol = "Should be a valid stock.";
-          that.setState({
-            errors: errors
-          });
-        }
+      this.setState({
+        transaction: transaction,
+        errors: errors
       });
     }
   },
@@ -220,14 +209,16 @@ var CreateTransaction = React.createClass({
               placeholder="12" type="number" max="1000000" min="0" step="1" 
               value={this.state.transaction.shares} onInputChange={this.handleChange} />
             <div className="text">shares of </div>
-            <ExpandingInput type="text" id="symbol" name="symbol" className={symbolClasses} 
-            placeholder="MSFT" value={this.state.transaction.symbol} 
-            onInputChange={this.handleChange} onBlur={this.handleBlur} />
+            <SymbolLookupInput id="symbol" name="symbol" className={symbolClasses} 
+              placeholder="MSFT" value={this.state.transaction.symbol} 
+              onInputChange={this.handleChange} symbolFound={this.symbolFound} />
             <div className="text"> for $</div>
             <ExpandingInput type="text" id="price" name="price" className={priceClasses} 
             placeholder="56.46" type="number" max="1000000" min="0" step="0.01" 
             value={this.state.transaction.price} onInputChange={this.handleChange} />
-            <div className="text">a share</div><DatePicker value={this.state.transaction.timestamp} onChange={this.onTimestampChanged} /><div className="text">.</div>
+            <div className="text">a share</div>
+            <DatePicker value={this.state.transaction.timestamp} onChange={this.onTimestampChanged} />
+            <div className="text">.</div>
           </div>
           <div>
             <div className="text">My broker charged me $</div>

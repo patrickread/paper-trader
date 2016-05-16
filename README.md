@@ -19,6 +19,8 @@ A paper trading app. Inspired by my long-time use of Google Finance, and my exha
 
  - Make day's changes accurate if a trade is made intraday
  - Error message system
+ - Available company drop down in stock picker
  - Graphs
  - First-time use guide
+ - Animations
  - Keyboard-based navigation
